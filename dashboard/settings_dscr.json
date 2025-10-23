@@ -1,0 +1,56 @@
+{
+    "arduino_port": {
+        "text" : "Der USB Port an dem der Arduino verbunden ist.",
+        "default" : "COM3",
+        "systest" : "COM"
+    },
+    "arduino_baudrate":{
+        "text" : "Die Übertragungsrate (Abtastgeschwindigkeit) des Arduinos.",
+        "default" : "9600"
+    },
+    "midi_client_address": {
+        "text" : "Die IP Adresse des MIDI Empfängers.",
+        "default" : "127.0.0.1"
+    },
+    "midi_client_port": {
+        "text" : "Die Port-Nummer Adresse des MIDI Empfängers.",
+        "default" : "4560"
+    },
+    "bpm_playing_speed": {
+        "text" : "Die Spielgeschwindigkeit des Instruments in BPM.",
+        "default" : "140"
+    },
+    "verbose": {
+        "text" : "true für eine genaue Konsolenausgabe, false für eine vereinfachte Ausgabe.",
+        "default" : "true"
+    },
+    "application_name": {
+        "text" : "Der Name der Anwendung.",
+        "default" : "AudioBrix"
+    },
+    "visualizer_address": {
+        "text" : "Die IP Adresse des Dashboard Empfängers (Visualizer).",
+        "default" : "127.0.0.1"
+    },
+    "visualizer_port": {
+        "text" : "Die Port-Nummer Adresse des Dashboard Empfängers (Visualizer).",
+        "default" : "4561"
+    },
+    "dashboard_port": {
+        "text" : "Die Port-Nummer Adresse des Dashboard (HTTP Port).",
+        "default" : "8000"
+    },
+    "instrument": {
+        "text" : "Der Name des Instruments (Name des Unterordners im instruments Ordner).",
+        "default" : "0"
+    },
+    "midi_device_id": {
+        "text" : "Die Geräte ID vom MIDI Device. Sollte 0 oder 1 nicht funktionieren, muss ggf. MIDI Software installiert werden.",
+        "default" : "0",
+        "systest" : "MIDI"
+    },
+    "note_amount": {
+        "text" : "Die Anzahl an möglichen Schlägen.",
+        "default" : "8"
+    }
+}

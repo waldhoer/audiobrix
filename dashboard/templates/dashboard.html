@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Audiobrix Dashboard</title>
+  <link rel="icon" href="/static/images/favicon.ico">
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/vexflow.js"></script>
+  <script src="/static/fontawesome/js/all.min.js"></script>
+</head>
+
+<body>
+  <h1>AUDIOBRIX DASHBOARD</h1>
+
+  <div class="dashboard">
+    <div class="grid-wrapper">
+      <div class="grid-container">
+        <table class="grid" id="grid">
+
+          <thead>
+            <tr>
+              <th></th>
+              <script>
+                // Draw beat numbers
+                for (let b = 0; b < 8; b++) {
+                  document.write('<th>' + (b + 1) + '</th>');
+                }
+              </script>
+            </tr>
+          </thead>
+
+          <tbody>
+            <script>
+              // Draw note grid with note annotations
+              const midiKeys = Object.keys(midi_names).map(Number); // Objec.keys only is sorted weirdly
+              for (let m = 7; m >= 0; m--) {
+                midi_note = Object.keys(midi_names)[m];
+                document.write('<tr><td class="rowlabel">' + midiToName(midi_note) + '</td>');
+                for (let b = 0; b < 8; b++) {
+                  document.write('<td><div class="cell" data-row-note="' + midi_note + '" data-beat="' + b + '"></div></td>');
+                }
+                document.write('</tr>');
+              }
+            </script>
+          </tbody>
+        </table>
+        </div>
+
+        <div id="output"></div>
+
+        <div class="button-group" style="padding-bottom: 0px;">
+          <button id="dmiButton" class="button button-green" onclick="toggleDMI()">▶️ Blockerkennung starten</button>
+          <button id="seqButton" class="button button-green" onclick="toggleSequencer()">🔁 Sequencer starten</button>
+        </div>
+        
+        <div class="log-container" id="logContainer" style="display: none;">
+          <pre id="log"></pre>
+          <p id="dmi_state" class="log">Blockerkennung: ?</p>
+          <p id="seq_state" class="log">Sequencer: ?</p>
+          <p id="pattern_log" class="log">Erkanntes Notenblatt: ?</p>
+          <p id="step_log" class="log">Gespielte Noten: ?</p>
+        </div>
+
+      </div>
+      
+      <div class="button-group" style="padding-bottom: 0px; padding-top: 0;">
+        <script>
+          setInstrumentButton();
+          checkDmiStatus();
+        </script>
+        <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier">
+          <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
+        </button>
+        <button class="button" id="toggleInstrument10" onclick="setInstrument(10)" title="Xylophon">
+          <p><img width="24" height="24" src="https://img.icons8.com/android/24/xylophone.png" alt="xylophone"/></p>
+        </button>
+        <button class="button" id="toggleInstrument51" onclick="setInstrument(51)" title="Streicher">
+          <p><img width="24" height="24" src="https://img.icons8.com/android/24/violin.png" alt="violin"/></p>
+        </button>
+        <button class="button" id="toggleInstrument56" onclick="setInstrument(56)" title="Trompete">
+          <p><img width="24" height="24" src="https://img.icons8.com/android/24/trumpet.png" alt="trumpet"/></p>
+        </button>
+        <button class="button" id="toggleInstrument24" onclick="setInstrument(24)" title="Gitarre">
+          <p><img width="24" height="24" src="https://img.icons8.com/android/24/guitar.png" alt="guitar"/></p>
+        </button>
+      </div>
+      
+      <div class="slidecontainer">
+        <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
+      </div>
+      <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
+      <script>updateSpeed(true);</script>
+
+      <script src="/static/js/update_table.js"></script>
+  </div>
+
+  <div class="floating-menu-vertical">
+    <button class="button" onclick="location.href='/settings'">
+      <p><i class="fa-solid fa-sliders"></i> &nbsp; Einstellungen</p>
+    </button>
+    <button class="button" id="toggleDetailsButton" onclick="toggleDetails()">
+      <p><i class="fa-solid fa-code"></i> &nbsp; Details Anzeigen</p>
+    </button>
+  </div>
+
+<div class="floating-notification-vertical" id="notificationContainer"></div>
+  <a href="https://univie.ac.at">
+    <img src="/static/images/univie_logo.png" class="logo" style="width:200px;">
+  </a> 
+</div>
+
+  
+</body>
+</html>
