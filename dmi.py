@@ -3,6 +3,13 @@ import serial, json, threading
 from termcolor import colored
 from Helpers import *
 
+def base_round(value, base=5) -> int:
+    """
+    Rounds a given value to the nearest base.
+    """
+    adjustment = 1
+    return round((value - adjustment) / base)
+
 class DMI:
     """
     Digital Music Instrument class. Handles arduino communication, note receiving and message-to-dashboard sending.
@@ -26,6 +33,7 @@ class DMI:
                 "red"
             ))
 
+    
     def capture(self) -> None:
         """
         Reads pressed button JSON data from Arduino in a loop.
@@ -38,7 +46,6 @@ class DMI:
                 tolerance = 5
                 for i in range(tolerance):
                     try:
-                        print(raw)
                         raw = raw.decode('utf-8').strip()
                         break
                     except UnicodeDecodeError as d:
@@ -53,7 +60,8 @@ class DMI:
                 continue # skip broken messages
 
             pressed = json.loads(raw) 
-            print(colored(f"Received from Arduino: {pressed}", "blue"))
+            test = base_round(pressed[0]["Resistance"], base=5)
+            print(colored(f"Received from Arduino: {test} Bricks - {pressed[0]}", "blue"))
 
     def run(self) -> None:
         """
