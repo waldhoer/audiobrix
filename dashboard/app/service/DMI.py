@@ -78,11 +78,15 @@ class DMI:
             notes = []
             for i in range(self.config["note_amount"]):
                 resistance = pressed[i]["Resistance"]
-                #if self.config["verbose"]:
-                    #test = self.base_round(resistance)
-                    #print(colored(f"Received from Arduino: MIDI_{self.resistance_to_midi(resistance)} - {test} Bricks - {pressed[i]}", "blue"))
-                notes.append([self.resistance_to_midi(resistance)])
-            
+                brick_amount = self.base_round(resistance)
+                if self.config["verbose"]:
+                    print(colored(f"Received from Arduino: MIDI_{self.resistance_to_midi(brick_amount)} - {brick_amount} Bricks - {pressed[i]}", "blue"))
+                
+                if (brick_amount > 0):
+                    notes.append([self.resistance_to_midi(brick_amount)])
+                else:
+                    notes.append([])
+
             with self.lock:
                 self.notes = notes
 
@@ -90,19 +94,18 @@ class DMI:
             self.dashboard_client.send_message("/dashboard",(json.dumps(message) + "\n").encode())
             
 
-    def resistance_to_midi(self, resistance: int) -> int:
+    def resistance_to_midi(self, bricks_amount: int) -> int:
         """
-        Converts a resistance value (kOhm) to a MIDI note.
-        @param resistance: Resistance in kOhm
+        Converts a brick amount to a MIDI note.
+        @param bricks_amount: Amount of stacked bricks
         @return: MIDI note number
         """
         whole_tones = list([60, 62, 64, 65, 67, 69, 71, 72])
 
-        stacked = self.base_round(resistance)
-        if (stacked >= len(whole_tones)):
+        if (bricks_amount >= len(whole_tones)):
             return whole_tones[len(whole_tones) - 1] 
     
-        return whole_tones[stacked]
+        return whole_tones[bricks_amount-1]
     
     def run(self) -> None:
         """
