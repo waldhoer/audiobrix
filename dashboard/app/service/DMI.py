@@ -3,6 +3,7 @@ import serial, json, threading
 from termcolor import colored
 from pythonosc import udp_client
 from app.core.helpers import Helpers
+from app.core.exceptions import AudiobrixUsbError
 
 class DMI:
     """
@@ -28,13 +29,10 @@ class DMI:
                 self.config["visualizer_address"],
                 self.config["visualizer_port"]
             )
+
         except serial.SerialException as e:
-            print(colored(
-                f"Connection to Arduino failed: {e}. "
-                "If the Arduino is connected, try another port in settings.json (arduino_port).",
-                "red"
-            ))
             self.status = Helpers.Status.ERROR
+            raise AudiobrixUsbError(e)
 
     def base_round(self, value) -> int:
         """
@@ -65,6 +63,10 @@ class DMI:
                 print(colored(f"Lost connection to Arduino: {e}", "red"))
                 self.status = Helpers.Status.DISCONNECTED
                 break
+
+            except AttributeError as e:
+                self.status = Helpers.Status.ERROR
+                raise AudiobrixUsbError(e)
 
             if not raw or raw ==  "": 
                 continue # skip broken messages
