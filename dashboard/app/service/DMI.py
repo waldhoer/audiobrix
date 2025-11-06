@@ -3,7 +3,7 @@ import serial, json, threading
 from termcolor import colored
 from pythonosc import udp_client
 from app.core.helpers import Helpers
-from app.core.exceptions import AudiobrixUsbError
+from app.core.exceptions import *
 
 class DMI:
     """
@@ -60,9 +60,8 @@ class DMI:
                         raw = self.arduino.readline() # Read next line for next iteration
                     
             except serial.SerialException as e:
-                print(colored(f"Lost connection to Arduino: {e}", "red"))
                 self.status = Helpers.Status.DISCONNECTED
-                break
+                raise AudiobrixUsbKilledError(e)
 
             except AttributeError as e:
                 self.status = Helpers.Status.ERROR
