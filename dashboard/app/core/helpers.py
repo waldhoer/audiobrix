@@ -1,11 +1,8 @@
 from pathlib import Path
-import json
-import subprocess
+import json, subprocess
+from pygame import midi
 
-import pygame
-
-class Helpers:
-    config = None
+class Helpers: 
     descriptions = None
 
     path = Path(__file__).resolve()
@@ -35,7 +32,7 @@ class Helpers:
         """
         Update a key in the config and save it to file.
         """
-        cls.config[key] = value
+        cls.config[key] = value 
         with open(cls.config_path, "w") as config_file:
             json.dump(cls.config, config_file, indent=4)
 
@@ -70,9 +67,9 @@ class Helpers:
         Results can be used to identify which MIDI device to use for the MIDI audio player.
         This is specifically important on Laptops (often) without default MIDI devices.
         """
-        pygame.midi.init()
+        midi.init()
         devices = []
-        for i in range(pygame.midi.get_count()):
-            info = pygame.midi.get_device_info(i)
+        for i in range(midi.get_count()):
+            info = midi.get_device_info(i)
             devices.append(str(i) + ": " + info[0].decode("utf-8")+ "-" + info[1].decode("utf-8"))
         return devices
