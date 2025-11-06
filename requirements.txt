@@ -5,3 +5,4 @@ uvicorn
 fastapi[standard]
 jinja2
 python-osc
+blinker
