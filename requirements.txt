@@ -2,6 +2,6 @@ pygame
 termcolor
 fastapi 
 uvicorn
-"fastapi[standard]"
+fastapi[standard]
 jinja2
 python-osc
