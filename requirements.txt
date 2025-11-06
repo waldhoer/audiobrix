@@ -1,0 +1,7 @@
+pygame
+termcolor
+fastapi 
+uvicorn
+"fastapi[standard]"
+jinja2
+python-osc
