@@ -80,7 +80,7 @@ class DMI:
                 Event.warning.send(
                     self, 
                     service=Event.DMI, 
-                    message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw}")
+                    message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}")
                 )
                 continue # skip broken messages
 
