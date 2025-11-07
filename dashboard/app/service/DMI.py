@@ -4,6 +4,7 @@ from termcolor import colored
 from pythonosc import udp_client
 from app.core.helpers import Helpers
 from app.core.exceptions import *
+from app.core.events import Event
 
 class DMI:
     """
@@ -31,8 +32,7 @@ class DMI:
             )
 
         except serial.SerialException as e:
-            self.status = Helpers.Status.ERROR
-            raise AudiobrixUsbError(e)
+            Event.dmi_error.send(self, service="DMI", message=str(AudiobrixUsbError(e)))
 
     def base_round(self, value) -> int:
         """
@@ -56,16 +56,20 @@ class DMI:
                         raw = raw.decode('utf-8').strip()
                         break
                     except UnicodeDecodeError as d:
-                        print(colored(f"Error while Decoding: {d}. Retry ({i}/{tolerance})", "red"))
+                        Event.dmi_warning.send(
+                            self, 
+                            service="DMI", 
+                            message=str(f"Error while Decoding: {d}. Retry ({i}/{tolerance})")
+                        )
                         raw = self.arduino.readline() # Read next line for next iteration
                     
             except serial.SerialException as e:
-                self.status = Helpers.Status.DISCONNECTED
-                raise AudiobrixUsbKilledError(e)
+                Event.dmi_disconnected.send(self, service="DMI", message=str(AudiobrixUsbKilledError(e)))
+                break
 
             except AttributeError as e:
-                self.status = Helpers.Status.ERROR
-                raise AudiobrixUsbError(e)
+                Event.dmi_error.send(self, service="DMI", message=str(AudiobrixUsbError(e)))
+                break
 
             if not raw or raw ==  "": 
                 continue # skip broken messages
@@ -73,7 +77,11 @@ class DMI:
             try:
                 pressed = json.loads(raw) 
             except json.decoder.JSONDecodeError as e:
-                print(colored(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw}", "red"))
+                Event.dmi_warning.send(
+                    self, 
+                    service="DMI", 
+                    message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw}")
+                )
                 continue # skip broken messages
 
             notes = []

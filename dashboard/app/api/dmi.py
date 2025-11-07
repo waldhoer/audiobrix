@@ -11,11 +11,9 @@ async def start(request: Request):
     """
     Endpoint for starting the brick recognition service.
     """
-    if request.app.state.dmi is None or request.app.state.dmi.status != Helpers.Status.ACTIVE:
+    if request.app.state.dmi.status != Helpers.Status.ACTIVE:
         try:
-            dmi = DMI()
-            request.app.state.dmi = dmi
-            threading.Thread(target=dmi.run, daemon=True).start()
+            threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
             return {"status": Helpers.Status.ACTIVE}
         except Exception as e:
             return {"status": Helpers.Status.ERROR, "message": str(e)}
