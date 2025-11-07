@@ -76,3 +76,7 @@ ws.onopen = () => {
 ws.onerror = (e) => {
     logMessage("Beim Dashboard ist ein Fehler aufgetreten: " + e , "red");
 };
+
+// On page load, everything is stopped
+stopSequencer();
+stopDMI();
