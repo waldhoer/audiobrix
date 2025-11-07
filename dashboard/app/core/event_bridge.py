@@ -2,12 +2,29 @@ import asyncio
 from collections import deque
 
 class EventBridge:
+    """
+    Connects Blinker signals to WebSocket broadcasts.
+    Automatically sends the internal signals to the websocket manager.
+    This can be then used directly in frontend. 
+
+    EventBridge must be a Singleton to avoid duplicate connection.
+    """
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
     def __init__(self, ws_manager):
+        if getattr(self, "_initialized", False):
+            return
         self.ws_manager = ws_manager
         self.loop = None
         self.pending_events = deque()
         self._connected_signals = set()
         self.connect_signals()
+        print("[EventBridge] EventBridge initialized")
 
     def set_loop(self, loop: asyncio.AbstractEventLoop):
         """
