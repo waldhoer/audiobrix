@@ -68,5 +68,6 @@ def update_output_device(self, new_device_id=None):
     except Exception as e:
         self.player = None
         Event.error.send(self,service=Event.DMI,message=str(e))
+        return
     
     Event.device_change.send(self,service=Event.DMI,message=f"Changed speed to {new_device_id}")
