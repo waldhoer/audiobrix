@@ -26,7 +26,6 @@ async def lifespan(app: FastAPI):
     event_bridge.set_loop(loop)
     app.state.loop = loop
     app.state.dmi = DMI()
-    app.state.dmi.initialize()
     app.state.sequencer = None
     app.state.dashboard = dashboard
 

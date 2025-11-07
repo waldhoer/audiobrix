@@ -13,6 +13,7 @@ async def start(request: Request):
     """
     if request.app.state.dmi.status != Helpers.Status.ACTIVE:
         try:
+            request.app.state.dmi.initialize()
             threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
             return {"status": Helpers.Status.ACTIVE}
         except Exception as e:
