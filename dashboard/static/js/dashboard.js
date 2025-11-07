@@ -154,18 +154,7 @@ async function writeSettings(settings) {
  */
 async function startDMI() {
     try {
-        if (Status.current_dmi_status === Status.ACTIVE) {
-            logMessage("Das DMI ist bereits aktiv \u{1F609}", "DarkOrange"); // winking face
-            return;
-        }
-        const data = await fetch_json("/start");
-        if (data.status === Status.ERROR) {
-            logMessage("Fehler beim Starten des DMI \u{1F6A8}", "DarkOrange"); // siren symbol
-            logMessage(data.message, "red");
-            showNotification("Fehler beim Starten der Blockerkennung. Klicke auf \"Details Anzeigen\" für mehr Infos.");
-        } else {
-            logMessage("DMI gestartet \u{1F4AA}");
-        }
+        await fetch_json("/start");
     } catch (err) {
         logMessage("Fehler beim Starten des DMI: " + err, "red");
     }
@@ -176,11 +165,7 @@ async function startDMI() {
 */
 async function stopDMI() {
     try {
-        if (Status.current_dmi_status !== Status.ACTIVE) {
-            logMessage("Das DMI war bereits deaktiviert \u{1F609}", "DarkOrange"); // winking face
-        }
         await fetch("/stop");
-        logMessage("DMI gestoppt \u{1F4A4}");
     } catch (err) {
         logMessage("Fehler beim Stoppen des DMI: " + err, "red");
     }
@@ -191,19 +176,7 @@ async function stopDMI() {
  */
 async function startSequencer() {
     try {
-        if (Status.current_seq_status === Status.ACTIVE) {
-            logMessage("Der Sequencer war bereits aktiviert \u{1F609}", "DarkOrange"); // winking face
-            return;
-        }
-        const data = await fetch_json("/sequencer/start")
-        if (data.status === Status.ERROR) {
-            logMessage("Fehler beim Starten des Sequencers \u{1F6A8}", "DarkOrange"); // siren symbol
-            logMessage(data.message, "red");
-            showNotification("Fehler beim Starten des Sequencers. Klicke auf \"Details Anzeigen\" für mehr Infos.");
-        } else {
-            logMessage("Sequencer gestartet \u{1F4AA}");
-        }
-        
+        await fetch_json("/sequencer/start")
     } catch (err) {
         logMessage("Fehler beim Starten des Sequncers: " + err, "red");
     }
@@ -214,13 +187,7 @@ async function startSequencer() {
  */
 async function stopSequencer() {
     try {
-        if (Status.current_seq_status !== Status.ACTIVE) {
-            logMessage("Der Sequencer war bereits deaktiviert \u{1F609}", "DarkOrange"); // winking face
-            return;
-        }
-
         await fetch("/sequencer/stop");
-        logMessage("Sequencer gestoppt \u{1F4A4}");
     } catch (err) {
         logMessage("Fehler beim Stoppen des Sequencers: " + err, "red");
     }
@@ -278,6 +245,13 @@ function setSequencerButtonState(active) {
     }
 }
 
+function setDMIStateText(state){
+    document.getElementById("dmi_state").textContent = "Blockerkennung: "+(state) ? "Aktiv" : "Inaktiv";
+}
+
+function setSequencerStateText(state){
+    document.getElementById("seq_state").textContent = "Blockerkennung: "+(state) ? "Aktiv" : "Inaktiv";
+}
 /**
  * Toggles the brick recognition state and updates the button accordingly
  */
@@ -411,40 +385,3 @@ async function updateSpeed(set_default=false) {
         }
     }
 }
-
-/**
- * Checks the current status of the DMI and updates the buttons & messages accordingly.
- */
-async function checkDmiStatus() {
-    let dashboard_is_dead = false;
-    while (true) {
-        try {
-            const dmi_data = await fetch_json("/status?service=dmi")
-            const seq_data = await fetch_json("/status?service=seq")
-
-            setSequencerButtonState(seq_data.status === Status.ACTIVE);
-            setDMIButtonState(dmi_data.status === Status.ACTIVE);
-
-            if (dmi_data.status === Status.DISCONNECTED && Status.current_dmi_status === Status.ACTIVE) {
-                showNotification("Der Arduino wurde getrennt. Die Blockerkennung wurde gestoppt.");
-            } 
-
-            document.getElementById("seq_state").textContent = "Sequencer: "+seq_data.status;
-            document.getElementById("dmi_state").textContent = "Blockerkennung: "+dmi_data.status;
-
-            Status.current_dmi_status = dmi_data.status;
-            Status.current_seq_status = seq_data.status;
-        } catch (err) {
-            if (!dashboard_is_dead) {
-                logMessage("Fehler beim Dashboard \u{1F4F4}", "orange");
-                logMessage(
-                    "Der Status des DMI konnte nicht abgefragt werden.\n"+
-                    "Dieses Problem tritt auf, wenn das Python Programm im Hintergrund nicht mehr läuft.", "red");
-                showNotification("Das Dashboard konnte den lokalen Server nicht erreichen. Läuft das Python Programm?",9000);
-                dashboard_is_dead = true;
-            }
-        }
-        await new Promise(r => setTimeout(r, 1000));
-    }
-}
-
