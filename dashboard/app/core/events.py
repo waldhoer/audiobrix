@@ -5,17 +5,18 @@ class _Events:
     Singleton class containing all signals for the blinker event messaging.
     """
     def __init__(self):
-        self.dmi_active = signal("dmi-active")
-        self.dmi_inactive = signal("dmi-inactive")
-        self.dmi_error = signal("dmi-error")
-        self.dmi_disconnected = signal("dmi-disconnected")
-        self.dmi_warning = signal("dmi-warning")
+        self.active = signal("active")
+        self.inactive = signal("inactive")
+        self.error = signal("error")
+        self.warning = signal("warning")
 
-        self.sequencer_active = signal("sequencer-active")
-        self.sequencer_inactive = signal("sequencer-inactive")
-        self.sequencer_error = signal("sequencer-error")
-        self.sequencer_instrument_change = signal("sequencer-instrument_changed")
-        self.sequencer_speed_change = signal("sequencer-speed_changed")
-        self.sequencer_device_change = signal("sequencer-device-changed")
+        self.disconnected = signal("disconnected")
 
+        self.instrument_change = signal("instrument_changed")
+        self.speed_change = signal("speed_changed")
+        self.device_change = signal("device_changed")
+
+    DMI = "DMI"
+    SEQ = "Sequencer"
+    
 Event = _Events()

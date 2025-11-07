@@ -32,7 +32,7 @@ class DMI:
             )
 
         except serial.SerialException as e:
-            Event.dmi_error.send(self, service="DMI", message=str(AudiobrixUsbError(e)))
+            Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
 
     def base_round(self, value) -> int:
         """
@@ -56,19 +56,19 @@ class DMI:
                         raw = raw.decode('utf-8').strip()
                         break
                     except UnicodeDecodeError as d:
-                        Event.dmi_warning.send(
+                        Event.warning.send(
                             self, 
-                            service="DMI", 
+                            service=Event.DMI, 
                             message=str(f"Error while Decoding: {d}. Retry ({i}/{tolerance})")
                         )
                         raw = self.arduino.readline() # Read next line for next iteration
                     
             except serial.SerialException as e:
-                Event.dmi_disconnected.send(self, service="DMI", message=str(AudiobrixUsbKilledError(e)))
+                Event.disconnected.send(self, service=Event.DMI, message=str(AudiobrixUsbKilledError(e)))
                 break
 
             except AttributeError as e:
-                Event.dmi_error.send(self, service="DMI", message=str(AudiobrixUsbError(e)))
+                Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
                 break
 
             if not raw or raw ==  "": 
@@ -77,9 +77,9 @@ class DMI:
             try:
                 pressed = json.loads(raw) 
             except json.decoder.JSONDecodeError as e:
-                Event.dmi_warning.send(
+                Event.warning.send(
                     self, 
-                    service="DMI", 
+                    service=Event.DMI, 
                     message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw}")
                 )
                 continue # skip broken messages
