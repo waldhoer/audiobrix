@@ -331,16 +331,7 @@ async function changeInstrumentSetting(endpoint_uri, parameters, title, expected
             url.searchParams.set(k, v);
         })
 
-        const data = await fetch_json(url);
-
-        if (data.status === Status.ERROR) {
-            logMessage("Fehler beim Wechseln von " + title + " \u{1F6A8}", "DarkOrange");
-            logMessage(data.message, "red");
-            return false;
-        } else if (data.status === expected) {
-            logMessage(title + " aktualisiert: " + Object.entries(parameters).map(([k, v]) => v).join(";"));
-            return true;
-        }
+        await fetch_json(url);
 
     } catch (err) {
         logMessage("Netzwerkfehler beim Wechseln von " + title + ": " + err, "red");
