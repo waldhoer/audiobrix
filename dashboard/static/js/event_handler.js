@@ -20,11 +20,11 @@ ws.onmessage = (event) => {
         }
     }
     
-    console.log(data);
     // Handle event style messages
     if (data.type === "event") {
+        console.log(data);
         let body = data.body
-        
+
         if (data.name === "active") {
             logMessage("\u{1F973}" +body.service + " wurde gestartet.");
             if (body.service == "DMI"){
