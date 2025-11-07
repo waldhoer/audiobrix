@@ -1,4 +1,4 @@
-import asyncio, pygame
+import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, WebSocket
@@ -8,18 +8,24 @@ from app.core.helpers import Helpers
 from app.service.osc_manager import OscManager
 from app.service.web_socket_manager import WebSocketManager
 from app.api import html as htmlApi, dmi as dmiApi, sequencer as sequencerApi, config as configApi
+from app.core.events import Event
+from pygame import midi
+from app.core.event_bridge import EventBridge
+from app.service.DMI import DMI
 
 BASE_DIR = Path(__file__).resolve().parent
 config = Helpers.config
 
 ws_manager = WebSocketManager()
+event_bridge = EventBridge(ws_manager, loop=None)
 dashboard = udp_client.SimpleUDPClient(config["visualizer_address"], config["visualizer_port"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     loop = asyncio.get_running_loop()
     app.state.loop = loop
-    app.state.dmi = None
+    event_bridge.loop = loop
+    app.state.dmi = DMI()
     app.state.sequencer = None
     app.state.dashboard = dashboard
 
@@ -32,7 +38,7 @@ async def lifespan(app: FastAPI):
     )
     app.state.osc.start()
     yield
-    pygame.midi.quit()
+    midi.quit()
 
 app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
