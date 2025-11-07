@@ -2,7 +2,7 @@ from pygame.midi import MidiException
 from app.service.audio import MidiPlayer
 import time, json, threading
 from pythonosc import udp_client
-
+from app.core.events import Event
 from app.core.helpers import Helpers
 
 class Sequencer:
@@ -24,7 +24,7 @@ class Sequencer:
         self.instrument = instrument
         self.status = Helpers.Status.INACTIVE
 
-    def start(self) -> dict:
+    def start(self):
         """
         Plays the sequencer in a loop until it is terminated using the stop() method.
         """
@@ -32,15 +32,16 @@ class Sequencer:
             try:
                 self.midi_player = MidiPlayer(instrument_nr=self.instrument)
             except Exception as e:
-                self.status = Helpers.Status.ERROR
-                return {"status": "error", "message": str(e)}
+                Event.error.send(self, service=Event.SEQ, message=str(e))
+                return
             
         if self.status != Helpers.Status.ACTIVE:
             self.thread = threading.Thread(target=self.loop, daemon=True)
             self.thread.start()
             self.status = Helpers.Status.ACTIVE
-
-        return {"status": self.status}
+            Event.active.send(self, service=Event.SEQ)
+        else:
+            Event.warning.send(self, service=Event.SEQ, message="Sequencer is already active.")
     
     def stop(self) -> None:  
         """
@@ -51,8 +52,9 @@ class Sequencer:
             self.midi_player = None
 
         self.status = Helpers.Status.INACTIVE
+        Event.inactive.send(self, service=Event.SEQ)
 
-    def change_instrument(self, instrument : int) -> dict:
+    def change_instrument(self, instrument : int):
         """
         Changes the instrument of the sequencer while playing
         @param instrument: The GM number of the new instrument 
@@ -64,10 +66,10 @@ class Sequencer:
             try:
                 self.midi_player = MidiPlayer(instrument_nr=self.instrument)
             except Exception as e:
-                self.status = Helpers.Status.ERROR
-                return {"status": self.status, "message": str(e)}
+                Event.error.send(self, service=Event.SEQ, message=str(e))
+                return
             
-        return {"status": Helpers.Status.INSTRUMENT_CHANGED}
+        Event.instrument_change.send(self, service=Event.SEQ, message=f"Changed to {instrument}")
 
     def loop(self) -> None:
         """
@@ -105,14 +107,14 @@ class Sequencer:
             if sleep_time > 0:
                 time.sleep(sleep_time)
     
-    def change_speed(self, bpm: int) -> dict:
+    def change_speed(self, bpm: int):
         """
         Changes the playing speed of the sequencer.
         @param bpm: The new beats per minute speed
         """
         if bpm < 20 or bpm > 300:
-            self.status = Helpers.Status.ERROR
-            return {"status": self.status, "message": "BPM must be between 20 and 300."}
+            Event.error.send(self, service=Event.SEQ, message="BPM must be between 20 and 300.")
+            return
 
         self.bpm = bpm
-        return {"status": Helpers.Status.SPEED_CHANGED}
+        Event.speed_change.send(self, service=Event.SEQ, message=f"Changed speed to {bpm}")
