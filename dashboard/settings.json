@@ -4,13 +4,13 @@
     "midi_client_address": "127.0.0.1",
     "midi_client_port": 4560,
     "bpm_playing_speed": 150,
-    "verbose": true,
+    "verbose": false,
     "note_amount": 8,
     "application_name": "AudioBrix",
     "visualizer_address": "127.0.0.1",
     "visualizer_port": 4561,
     "dashboard_port": 8000,
-    "instrument": 0,
+    "instrument": 51,
     "midi_device_id": 0,
     "skip": []
 }
