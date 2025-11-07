@@ -12,22 +12,6 @@ const midi_names = {
     72 : "C4",
 };
 
-/**
- * Status class for DMI and Sequencer States.
- */
-class Status{
-    static ACTIVE = "active";
-    static INACTIVE = "inactive";
-    static ERROR = "error";
-    static DISCONNECTED = "disconnected";
-    static INSTRUMENT_CHANGED = "instrument_changed";
-    static SPEED_CHANGED = "speed_changed";
-    DEVICE_CHANGED = "device_changed";
-    static OK = "ok";
-
-    static current_dmi_status = Status.INACTIVE;
-    static current_seq_status = Status.INACTIVE;
-}
 
 /**
  * Maps a name to a MIDI number.
@@ -199,12 +183,7 @@ async function stopSequencer() {
 async function changeInstrumentDevice(){
     title = "MIDI Output Device";
     try {
-        let result = await fetch_json("http://localhost:8000/sequencer/device");
-        if (result == Status.DEVICE_CHANGED){
-            console.log("MIDI Output Device wurde aktualisiert");
-        } else {
-            console.log("Fehler beim Wechseln des MIDI Output Device "+result.message);
-        }
+        await fetch_json("http://localhost:8000/sequencer/device");
     } catch (err) {
         console.error("Netzwerkfehler beim Wechseln von " + title + ": " + err, "red");
         return false;
@@ -321,10 +300,9 @@ async function setInstrumentButton(instrument = null){
  * @param {String} endpoint_uri The endpoint URI of the update operation
  * @param {dict} parameters The parameters to attach to the URI (GET)
  * @param {String} title The title of the change operation for logging purposes
- * @param {Status} expected The expected Status upon success
  * @returns true if the instrument update was successful, false otherwise
  */
-async function changeInstrumentSetting(endpoint_uri, parameters, title, expected){
+async function changeInstrumentSetting(endpoint_uri, parameters, title){
     try {
         const url = new URL(endpoint_uri, window.location.origin);
         Object.entries(parameters).forEach(([k, v]) => {
@@ -344,7 +322,7 @@ async function changeInstrumentSetting(endpoint_uri, parameters, title, expected
  * @param {*} instrument The GM instrument number
  */
 async function setInstrument(instrument) {
-    if (changeInstrumentSetting("/sequencer/instrument", {"channel" : instrument}, "Instrument", Status.INSTRUMENT_CHANGED)){
+    if (changeInstrumentSetting("/sequencer/instrument", {"channel" : instrument}, "Instrument")){
         setInstrumentButton(instrument);
     }
 }
@@ -371,7 +349,7 @@ async function updateSpeed(set_default=false) {
         speedValue.textContent = speed;
     } else {
         settings["bpm_playing_speed"] = Number(slider.value);
-        if (changeInstrumentSetting("/sequencer/speed",{"bpm" : slider.value}, "Geschwindikeit", Status.SPEED_CHANGED)){
+        if (changeInstrumentSetting("/sequencer/speed",{"bpm" : slider.value}, "Geschwindikeit")){
             updateSpeedText();
         }
     }
