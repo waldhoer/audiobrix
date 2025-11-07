@@ -42,6 +42,7 @@ class Sequencer:
             Event.active.send(self, service=Event.SEQ)
         else:
             Event.warning.send(self, service=Event.SEQ, message="Sequencer is already active.")
+            Event.active.send(self, service=Event.SEQ)
     
     def stop(self) -> None:  
         """
