@@ -11,6 +11,9 @@ async def start(request: Request):
     """
     Endpoint for starting the brick recognition service.
     """
+    if request.app.state.dmi == None:
+        request.app.state.dmi = DMI()
+        
     if request.app.state.dmi.status != Helpers.Status.ACTIVE:
         try:
             if(request.app.state.dmi.initialize()):
