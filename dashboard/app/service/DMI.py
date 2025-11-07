@@ -19,9 +19,10 @@ class DMI:
         self.notes = []
         self.lock = threading.Lock()
 
-    def initialize(self):
+    def initialize(self) -> bool:
         """
         Initializes the serial connection - Must be called after the DMI __init__ due to timing reasons for blinker.
+        @return: True if the initialization was successful, false otherwise
         """
         try:
             self.arduino = serial.Serial(
@@ -37,7 +38,10 @@ class DMI:
 
         except serial.SerialException as e:
             Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
-
+            return False
+        
+        return True
+    
     def base_round(self, value) -> int:
         """
         Rounds a given value to the nearest base.
