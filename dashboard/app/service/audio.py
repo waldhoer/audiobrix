@@ -1,6 +1,7 @@
 import pygame.midi
 import time
 from app.core.helpers import Helpers
+from app.core.events import Event
 
 class MidiPlayer:
     """
@@ -66,6 +67,6 @@ def update_output_device(self, new_device_id=None):
 
     except Exception as e:
         self.player = None
-        return {"status" : Helpers.Status.ERROR, "message" : str(e)}
+        Event.error.send(self,service=Event.DMI,message=str(e))
     
-    return {"status" : Helpers.Status.DEVICE_CHANGED}
+    Event.device_change.send(self,service=Event.DMI,message=f"Changed speed to {new_device_id}")
