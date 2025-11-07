@@ -19,6 +19,10 @@ class DMI:
         self.notes = []
         self.lock = threading.Lock()
 
+    def initialize(self):
+        """
+        Initializes the serial connection - Must be called after the DMI __init__ due to timing reasons for blinker.
+        """
         try:
             self.arduino = serial.Serial(
                 port=self.config["arduino_port"],
