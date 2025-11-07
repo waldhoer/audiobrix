@@ -92,11 +92,12 @@ class DMI:
             try:
                 pressed = json.loads(raw) 
             except json.decoder.JSONDecodeError as e:
-                Event.warning.send(
-                    self, 
-                    service=Event.DMI, 
-                    message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}")
-                )
+                if (Helpers.config["verbose"]):
+                    Event.warning.send(
+                        self, 
+                        service=Event.DMI, 
+                        message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}")
+                    )
                 continue # skip broken messages
 
             notes = []
