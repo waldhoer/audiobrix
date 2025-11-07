@@ -26,7 +26,7 @@ ws.onmessage = (event) => {
         let body = data.body
 
         if (data.name === "active") {
-            logMessage("\u{1F973}" +body.service + " wurde gestartet.");
+            logMessage("\u{1F973} " +body.service + " wurde gestartet.");
             if (body.service == "DMI"){
                 setDMIStateText(true);
                 setDMIButtonState(true);
@@ -37,7 +37,7 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "inactive") {
-            logMessage("\u{1F44B}" +body.service + " wurde beendet.");
+            logMessage("\u{1F44B} " +body.service + " wurde beendet.");
             if (body.service == "DMI"){
                 setDMIStateText(false);
                 setDMIButtonState(false);
