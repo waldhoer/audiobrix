@@ -121,6 +121,7 @@ class DMI:
         Runs the DMI thread until it is terminated using the stop() method.
         """
         self.status = Helpers.Status.ACTIVE
+        Event.active.send(self, service=Event.DMI)
         threading.Thread(target=self.capture, daemon=True).start()
         
         try:
@@ -130,9 +131,11 @@ class DMI:
             self.stop()
 
         self.status = Helpers.Status.INACTIVE
+        Event.inactive.send(self, service=Event.DMI)
 
     def stop(self) -> None:
         """
         Terminates the DMI thread greacefully.
         """
         self.status = Helpers.Status.INACTIVE
+        Event.inactive.send(self, service=Event.DMI)
