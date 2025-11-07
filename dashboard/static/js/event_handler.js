@@ -37,7 +37,7 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "inactive") {
-            logMessage("\u{1F973}" +body.service + " wurde beendet.");
+            logMessage("\u{1F44B}" +body.service + " wurde beendet.");
             if (body.service == "DMI"){
                 setDMIStateText(false);
                 setDMIButtonState(false);
@@ -48,14 +48,14 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "warning") {
-            logMessage("WARNUNG:" + body.service + body.message, "orange");
+            logMessage("\u{26A0} WARNING: " + body.service + " - " + body.message, "orange");
         }
 
         if (data.name === "error") {
             if (body.service == "DMI") {
                 setDMIButtonState(false);
                 setDMIStateText(false);
-                logMessage("ERROR: " + body.service + body.message, "red");
+                logMessage("\u{26D3} ERROR: " + body.service + " - " +body.message, "red");
                 showNotification("Die Blockerkennung konnte nicht gestartet werden.");
             }
         }
@@ -63,7 +63,7 @@ ws.onmessage = (event) => {
         if (data.name === "disconnected") {
             setDMIButtonState(false);
             setDMIStateText(false);
-            logMessage("DISCONNECTED: " + body.service + body.message, "orange");
+            logMessage("\u{26D3} DISCONNECTED: " + body.message, "red");
             showNotification("Der Arduino wurde getrennt. Die Blockerkennung wurde gestoppt.");
         }
     }
