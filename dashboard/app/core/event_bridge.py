@@ -20,7 +20,7 @@ class EventBridge:
         Connects the Signal from the Event singleton class automatically
         """
         for name, sig in Event.__dict__.items():
-            if hasattr(sig, "connect"):
+            if hasattr(sig, "connect") and not sig.has_receivers_for(self.make_handler(sig)): # filter signals which have not been connected yet
                 sig.connect(self.make_handler(sig), weak=False)
                 
                 if (Helpers.config["verbose"]):
@@ -36,7 +36,7 @@ class EventBridge:
             The loop timing is a little bit tricky, for future me: Do not simplify this :)
             """
             event_name = signal.name
-            print(f"[Signal] {event_name} | data={kwargs}", flush=True) # print in terminal
+            print(f"[Signal] {event_name} | data={kwargs}") # print in terminal
             message = {"event": event_name, "body": kwargs}
 
             try:
