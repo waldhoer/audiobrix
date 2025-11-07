@@ -17,15 +17,16 @@ BASE_DIR = Path(__file__).resolve().parent
 config = Helpers.config
 
 ws_manager = WebSocketManager()
-event_bridge = EventBridge(ws_manager, loop=None)
+event_bridge = EventBridge(ws_manager)
 dashboard = udp_client.SimpleUDPClient(config["visualizer_address"], config["visualizer_port"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     loop = asyncio.get_running_loop()
+    event_bridge.set_loop(loop)
     app.state.loop = loop
-    event_bridge.loop = loop
     app.state.dmi = DMI()
+    app.state.dmi.initialize()
     app.state.sequencer = None
     app.state.dashboard = dashboard
 
