@@ -37,7 +37,7 @@ class EventBridge:
             """
             event_name = signal.name
             print(f"[Signal] {event_name} | data={kwargs}") # print in terminal
-            message = {"event": event_name, "body": kwargs}
+            message = {"type":"event","name": event_name, "body": kwargs}
 
             try:
                 loop = self.loop or asyncio.get_event_loop()
@@ -49,7 +49,8 @@ class EventBridge:
                         asyncio.run_coroutine_threadsafe(self.ws_manager.broadcast(message), loop) # for other thread
                 else:
                     loop.run_until_complete(self.ws_manager.broadcast(message)) # rather rare case, added for robustness 
-            except RuntimeError:
+            except RuntimeError as e:
+                print(f"[EventBridge] RuntimeError in event handling: {e}. Falling back to asyncio.run.")
                 asyncio.run(broadcast_async(message))
 
         return handle_event
