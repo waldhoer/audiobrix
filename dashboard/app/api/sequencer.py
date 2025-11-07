@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 
 from app.core.helpers import Helpers
 from app.service.sequencer import Sequencer
+from app.core.events import Event
 
 router = APIRouter()
 config = Helpers.config
@@ -17,8 +18,8 @@ async def start_sequencer(request: Request):
             request.app.state.sequencer = sequencer
             request.app.state.osc.sequencer = sequencer # also the OSC Manager needs to be informed about the new sequencer for pattern broadcasting
         except Exception as e:
-            return {"status": Helpers.Status.ERROR, "message": str(e)}
-    return request.app.state.sequencer.start()
+            Event.error.send("API_SeqStart",service="Sequencer",message=str(e))
+    request.app.state.sequencer.start()
 
 @router.get("/sequencer/stop")
 async def stop_sequencer(request: Request):     
@@ -29,7 +30,6 @@ async def stop_sequencer(request: Request):
         request.app.state.sequencer.stop()
         request.app.state.sequencer = None
         request.app.state.osc.sequencer = None
-    return {"status": Helpers.Status.INACTIVE}
     
 @router.get("/sequencer/instrument")
 async def change_instrument(request: Request, channel : int):       
