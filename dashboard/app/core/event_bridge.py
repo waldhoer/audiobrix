@@ -51,6 +51,7 @@ class EventBridge:
         Creates an event handler foir each signal"""
         def handle_event(sender, **kwargs):
             message = {"type": "event", "name": signal.name, "body": kwargs}
+            print(f"[{signal.name}]: {kwargs}")
             self._schedule_broadcast(message)
         return handle_event
 
@@ -62,7 +63,8 @@ class EventBridge:
         from app.core.helpers import Helpers
 
         for name, sig in Event.__dict__.items():
-            if hasattr(sig, "connect") and sig not in self._connected_signals:
+            # filter signals which have not been connected yet
+            if hasattr(sig, "connect") and sig not in self._connected_signals and not sig.has_receivers_for(self.make_handler(sig)): 
                 sig.connect(self.make_handler(sig), weak=False)
                 self._connected_signals.add(sig)
                 if Helpers.config.get("verbose"):
