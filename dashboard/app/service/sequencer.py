@@ -22,7 +22,7 @@ class Sequencer:
         self.dashboard_client = dashboard_client
         self.midi_player = None
         self.instrument = instrument
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
 
     def start(self):
         """
@@ -35,10 +35,10 @@ class Sequencer:
                 Event.error.send(self, service=Event.SEQ, message=str(e))
                 return
             
-        if self.status != Helpers.Status.ACTIVE:
+        if self.running == False:
             self.thread = threading.Thread(target=self.loop, daemon=True)
             self.thread.start()
-            self.status = Helpers.Status.ACTIVE
+            self.running = True
             Event.active.send(self, service=Event.SEQ)
         else:
             Event.warning.send(self, service=Event.SEQ, message="Sequencer is already active.")
@@ -52,7 +52,7 @@ class Sequencer:
             self.midi_player.close()
             self.midi_player = None
 
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
         Event.inactive.send(self, service=Event.SEQ)
 
     def change_instrument(self, instrument : int):
@@ -80,7 +80,7 @@ class Sequencer:
         step = 0
         next_tick = time.perf_counter()
         print("Sequencer started")
-        while self.status == Helpers.Status.ACTIVE:
+        while self.running == True:
             current_notes = self.beats_pattern[step]
             played_notes = [
                 n for n in current_notes if "skip" in Helpers.config and [str(step), str(n)] not in Helpers.config["skip"]

@@ -14,19 +14,6 @@ class Helpers:
     with open(config_description_path, 'r', encoding="utf-8") as description_file:
         descriptions = json.load(description_file)
 
-    class Status:
-        """
-        Enum for service (DMI/Sequencer) status.
-        """
-        ACTIVE = "active"
-        INACTIVE = "inactive"
-        ERROR = "error"
-        DISCONNECTED = "disconnected"
-        INSTRUMENT_CHANGED = "instrument_changed"
-        SPEED_CHANGED = "speed_changed"
-        DEVICE_CHANGED = "device_changed"
-        OK = "ok"
-
     @classmethod
     def write(cls, key: str, value):
         """

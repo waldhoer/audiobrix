@@ -13,7 +13,7 @@ class DMI:
 
     def __init__(self):
         self.config = Helpers.config
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
 
         self.rounding_base = 5
         self.notes = []
@@ -55,7 +55,7 @@ class DMI:
         The received messages are lists of dicts formatted like [{"Expander":(e.g. 0x22), "Column":(A or B), "Pin":(e.g. 3))}]
         """
         first = True
-        while self.status == Helpers.Status.ACTIVE:
+        while self.running == True:
             try:
                 raw = self.arduino.readline()
 
@@ -77,12 +77,12 @@ class DMI:
                     first = False
                     Event.active.send(self, service=Event.DMI) 
             except serial.SerialException as e:
-                self.status = Helpers.Status.INACTIVE
+                self.running = False
                 Event.disconnected.send(self, service=Event.DMI, message=str(AudiobrixUsbKilledError(e)))
                 break
 
             except AttributeError as e:
-                self.status = Helpers.Status.INACTIVE
+                self.running = False
                 Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
                 break
 
@@ -136,20 +136,20 @@ class DMI:
         """
         Runs the DMI thread until it is terminated using the stop() method.
         """
-        self.status = Helpers.Status.ACTIVE
+        self.running = True
         threading.Thread(target=self.capture, daemon=True).start()
         
         try:
-            while self.status == Helpers.Status.ACTIVE:
+            while self.running == True:
                 time.sleep(1)
         except KeyboardInterrupt:
             self.stop()
 
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
 
     def stop(self) -> None:
         """
         Terminates the DMI thread greacefully.
         """
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
         Event.inactive.send(self, service=Event.DMI)
