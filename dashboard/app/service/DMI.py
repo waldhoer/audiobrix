@@ -125,11 +125,14 @@ class DMI:
         @param bricks_amount: Amount of stacked bricks
         @return: MIDI note number
         """
-        whole_tones = list([60, 62, 64, 65, 67, 69, 71, 72])
+        whole_tones = list([60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79])
 
         if (bricks_amount >= len(whole_tones)):
             return whole_tones[len(whole_tones) - 1] 
-    
+        if (bricks_amount > Helpers.config["max_note_height"]):
+            Event.warning.send(self, service=Event.DMI, 
+                message=f"Die gemessene Notenhöhe ({bricks_amount}) überschreitet das max_note_height limit ({Helpers.config["max_note_height"]})."
+                )
         return whole_tones[bricks_amount-1]
     
     def run(self) -> None:

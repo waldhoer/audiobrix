@@ -56,5 +56,9 @@
     "full_bar_view": {
         "text" : "Legt fest, ob die Blockdarstellung nur die höchste Note pro Schlag oder alle tatsächlich gelegten Blöcke pro Schlag angezeigt werden.",
         "default" : "true"
+    },
+    "max_note_height" :{
+        "text" : "Definiert die maximale Anzahl an (in 2x2er Schritten), die in einer Spalte gelegt werden können.",
+        "default" : 9
     }
 }

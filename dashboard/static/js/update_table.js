@@ -136,7 +136,7 @@ async function drawSheet(msg) {
     });
 
     // Format and draw
-    const voice = new VF.Voice({ num_beats: 8, beat_value: 4 });
+    const voice = new VF.Voice({ num_beats: settings["note_amount"], beat_value: 4 });
     voice.addTickables(staveNotes);
     new VF.Formatter().joinVoices([voice]).format([voice], 350);
     voice.draw(context, stave);

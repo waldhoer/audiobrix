@@ -33,16 +33,42 @@
 
           <tbody>
             <script>
-              // Draw note grid with note annotations
-              const midiKeys = Object.keys(midi_names).map(Number); // Objec.keys only is sorted weirdly
-              for (let m = 7; m >= 0; m--) {
-                midi_note = Object.keys(midi_names)[m];
-                document.write('<tr><td class="rowlabel">' + midiToName(midi_note) + '</td>');
-                for (let b = 0; b < 8; b++) {
-                  document.write('<td><div class="cell" data-row-note="' + midi_note + '" data-beat="' + b + '"></div></td>');
+              /*
+              We do not draw the table using document.write because the settings reading
+              requires a delay -> Instead we use the DOM method!
+              */
+              async function generate_table() {
+                const settings = await readSettings();
+
+                const midiKeys = Object.keys(midi_names).map(Number);
+
+                const tbody = document.getElementById('grid');
+                tbody.innerHTML = '';
+
+                for (let m = settings["max_note_height"]-1; m >= 0; m--) {
+                  const midi_note = Object.keys(midi_names)[m];
+
+                  const tr = document.createElement('tr');
+                  const labelCell = document.createElement('td');
+                  labelCell.className = 'rowlabel';
+                  labelCell.textContent = midiToName(midi_note);
+                  tr.appendChild(labelCell);
+
+                  for (let b = 0; b < settings["note_amount"]; b++) {
+                    const td = document.createElement('td');
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    div.dataset.rowNote = midi_note;
+                    div.dataset.beat = b;
+                    td.appendChild(div);
+                    tr.appendChild(td);
+                  }
+
+                  tbody.appendChild(tr);
                 }
-                document.write('</tr>');
               }
+
+              generate_table();
             </script>
           </tbody>
         </table>
