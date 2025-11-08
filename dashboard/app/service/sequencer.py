@@ -80,7 +80,6 @@ class Sequencer:
         step = 0
         next_tick = time.perf_counter()
         while self.running == True:
-            print(self.beats_pattern)
             current_notes = self.beats_pattern[step]
             played_notes = [
                 n for n in current_notes if "skip" in Helpers.config and [str(step), str(n)] not in Helpers.config["skip"]
