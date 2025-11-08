@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     app.state.osc = OscManager(
         config["visualizer_address"],
         config["visualizer_port"],
-        app.state.sequencer,
+        app.state,
         ws_manager,
         loop=loop
     )

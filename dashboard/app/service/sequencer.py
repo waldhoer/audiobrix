@@ -36,9 +36,9 @@ class Sequencer:
                 return
             
         if self.running == False:
+            self.running = True
             self.thread = threading.Thread(target=self.loop, daemon=True)
             self.thread.start()
-            self.running = True
             Event.active.send(self, service=Event.SEQ)
         else:
             Event.warning.send(self, service=Event.SEQ, message="Sequencer is already active.")
@@ -79,13 +79,13 @@ class Sequencer:
         """
         step = 0
         next_tick = time.perf_counter()
-        print("Sequencer started")
         while self.running == True:
+            print(self.beats_pattern)
             current_notes = self.beats_pattern[step]
             played_notes = [
                 n for n in current_notes if "skip" in Helpers.config and [str(step), str(n)] not in Helpers.config["skip"]
             ]
-
+            
             message = {
                 "type" : "step",
                 "step" : step,

@@ -12,7 +12,7 @@ async def start_sequencer(request: Request):
     """
     Endpoint for starting the sequencer service.
     """
-    if request.app.state.sequencer is None or request.app.state.sequencer.running == False:
+    if request.app.state.sequencer is None:
         try:
             sequencer = Sequencer(request.app.state.dashboard, config["bpm_playing_speed"], config["instrument"])
             request.app.state.sequencer = sequencer
