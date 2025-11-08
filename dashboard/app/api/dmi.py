@@ -21,7 +21,8 @@ async def start(request: Request):
                 threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
         except Exception as e:
             Event.error.send("API_Start",service="DMI",message=str(e))
-    Event.warning.send("API_Start",service="DMI",message="The DMI is already active.")
+    else:
+        Event.warning.send("API_Start",service="DMI",message="The DMI is already active.")
 
 @router.get("/stop")
 async def stop(request: Request):
