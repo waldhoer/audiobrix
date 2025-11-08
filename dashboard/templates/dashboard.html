@@ -18,60 +18,64 @@
     <div class="grid-wrapper">
       <div class="grid-container">
         <table class="grid" id="grid">
+          <thead id="grid-head"></thead>
+          <tbody id="grid-body"></tbody>
+        </table>
 
-          <thead>
-            <tr>
-              <th></th>
-              <script>
-                // Draw beat numbers
-                for (let b = 0; b < 8; b++) {
-                  document.write('<th>' + (b + 1) + '</th>');
-                }
-              </script>
-            </tr>
-          </thead>
+        <script>
+            /*
+            We do not draw the table using document.write because the settings reading
+            requires a delay -> Instead we use the DOM method!
+            */
+            async function generate_table() {
+              const settings = await readSettings();
 
-          <tbody>
-            <script>
-              /*
-              We do not draw the table using document.write because the settings reading
-              requires a delay -> Instead we use the DOM method!
-              */
-              async function generate_table() {
-                const settings = await readSettings();
+              const midiKeys = Object.keys(midi_names).map(Number);
 
-                const midiKeys = Object.keys(midi_names).map(Number);
+              // Header
+              const tbody = document.getElementById('grid-body');
+              const thead = document.getElementById('grid-head');
+              tbody.innerHTML = '';
+              thead.innerHTML = '';
 
-                const tbody = document.getElementById('grid');
-                tbody.innerHTML = '';
+              const theadRow = document.createElement('tr');
+              const emptyTh = document.createElement('th'); 
+              theadRow.appendChild(emptyTh);
 
-                for (let m = settings["max_note_height"]-1; m >= 0; m--) {
-                  const midi_note = Object.keys(midi_names)[m];
-
-                  const tr = document.createElement('tr');
-                  const labelCell = document.createElement('td');
-                  labelCell.className = 'rowlabel';
-                  labelCell.textContent = midiToName(midi_note);
-                  tr.appendChild(labelCell);
-
-                  for (let b = 0; b < settings["note_amount"]; b++) {
-                    const td = document.createElement('td');
-                    const div = document.createElement('div');
-                    div.className = 'cell';
-                    div.dataset.rowNote = midi_note;
-                    div.dataset.beat = b;
-                    td.appendChild(div);
-                    tr.appendChild(td);
-                  }
-
-                  tbody.appendChild(tr);
-                }
+              for (let b = 0; b < settings["note_amount"]; b++) {
+                const th = document.createElement('th');
+                th.textContent = b + 1;
+                theadRow.appendChild(th);
               }
 
-              generate_table();
-            </script>
-          </tbody>
-        </table>
+              thead.appendChild(theadRow);
+
+              // Table Cells
+              for (let m = settings["max_note_height"]-1; m >= 0; m--) {
+                const midi_note = Object.keys(midi_names)[m];
+
+                const tr = document.createElement('tr');
+                const labelCell = document.createElement('td');
+                labelCell.className = 'rowlabel';
+                labelCell.textContent = midiToName(midi_note);
+                tr.appendChild(labelCell);
+
+                for (let b = 0; b < settings["note_amount"]; b++) {
+                  const td = document.createElement('td');
+                  const div = document.createElement('div');
+                  div.className = 'cell';
+                  div.dataset.rowNote = midi_note;
+                  div.dataset.beat = b;
+                  td.appendChild(div);
+                  tr.appendChild(td);
+                }
+
+                tbody.appendChild(tr);
+              }
+            }
+
+            generate_table();
+          </script>
         </div>
 
         <div id="output"></div>
