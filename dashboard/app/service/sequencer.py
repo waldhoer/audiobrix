@@ -80,6 +80,8 @@ class Sequencer:
         step = 0
         next_tick = time.perf_counter()
         while self.running == True:
+            if not self.beats_pattern:
+                self.beats_pattern = [[] for _ in range(Helpers.config["note_amount"])] # empty patterns for edge case (DMI never started)
             current_notes = self.beats_pattern[step]
             played_notes = [
                 n for n in current_notes if "skip" in Helpers.config and [str(step), str(n)] not in Helpers.config["skip"]
@@ -98,7 +100,7 @@ class Sequencer:
                 except (RuntimeError, MidiException):
                     pass # ignore midi errors on termination gracefully
 
-            step = (step + 1) % len(self.beats_pattern)
+            step = (step + 1) % Helpers.config["note_amount"]
 
             # To increase performance stability usage of the perf_counter is required. 
             next_tick += 60.0 / self.bpm # interval
