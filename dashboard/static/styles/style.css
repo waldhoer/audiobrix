@@ -306,12 +306,12 @@ body {
 }
 
 .center {
-  position: static; /* remove absolute positioning */
+  position: static;
   transform: none;
   top: auto;
   left: auto;
 
-  margin: 40px auto;  /* add spacing */
+  margin: 40px auto;
   text-align: center;
   width: 50%;
 }
