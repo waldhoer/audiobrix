@@ -306,12 +306,14 @@ body {
 }
 
 .center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: static; /* remove absolute positioning */
+  transform: none;
+  top: auto;
+  left: auto;
+
+  margin: 40px auto;  /* add spacing */
   text-align: center;
-  width: 50%; 
+  width: 50%;
 }
 
 input[type="text"],
