@@ -6,7 +6,7 @@
     },
     "arduino_baudrate":{
         "text" : "Die Übertragungsrate (Abtastgeschwindigkeit) des Arduinos.",
-        "default" : "9600"
+        "default" : "115200"
     },
     "midi_client_address": {
         "text" : "Die IP Adresse des MIDI Empfängers.",
@@ -41,7 +41,7 @@
         "default" : "8000"
     },
     "instrument": {
-        "text" : "Der Name des Instruments (Name des Unterordners im instruments Ordner).",
+        "text" : "Instrumenten ID (General MIDI ID)",
         "default" : "0"
     },
     "midi_device_id": {
@@ -50,7 +50,11 @@
         "systest" : "MIDI"
     },
     "note_amount": {
-        "text" : "Die Anzahl an möglichen Schlägen.",
+        "text" : "Die Anzahl an möglichen Taktschlägen.",
         "default" : "8"
+    },
+    "full_bar_view": {
+        "text" : "Legt fest, ob die Blockdarstellung nur die höchste Note pro Schlag oder alle tatsächlich gelegten Blöcke pro Schlag angezeigt werden.",
+        "default" : "true"
     }
 }

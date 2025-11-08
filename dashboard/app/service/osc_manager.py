@@ -7,12 +7,13 @@ class OscManager:
     """
     Manager class for OSC Processing and Sending.
     """
-    def __init__(self, address, port, sequencer: Sequencer, ws_manager: WebSocketManager, loop: asyncio.AbstractEventLoop):
+    def __init__(self, address, port, state, ws_manager: WebSocketManager, loop: asyncio.AbstractEventLoop):
         self.address = address
         self.port = port
-        self.sequencer = sequencer
+        self.state = state
         self.ws_manager = ws_manager
         self.loop = loop
+        self.pattern_cache = None
 
     def start(self) -> None:
         """
@@ -50,8 +51,14 @@ class OscManager:
         else:
             parsed = args
 
-        if (self.sequencer != None and parsed["type"] == "pattern"):
-            self.sequencer.beats_pattern = parsed["data"]
+        # Feed directly DMI data if it is running
+        if (self.state.sequencer != None and parsed["type"] == "pattern"):
+            self.pattern_cache = parsed["data"]
+            self.state.sequencer.beats_pattern = parsed["data"]
+
+        # Use cache if the DMI is not running
+        elif (self.state.sequencer != None and parsed["type"] != "pattern"):
+            self.state.sequencer.beats_pattern = self.pattern_cache
 
         message = {"address": address, "data": parsed}
         asyncio.run_coroutine_threadsafe(self.ws_manager.broadcast(message), self.loop)

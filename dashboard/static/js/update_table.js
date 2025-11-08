@@ -5,11 +5,13 @@ const ws = new WebSocket(`ws://${location.host}/ws`);
 
 let skippedNotes = []; // [["beat", "midi"]] like e.g. [["0","72"]]
 
+let settings;
+
 /**
  * Assigns the toggle/skip functionality to all cell buttons.
  */
 async function setupTableSkip() {
-    const settings = await readSettings();
+    settings = await readSettings();
     if (settings.skip) {
         const skipList = settings.skip || [];
 
@@ -67,13 +69,23 @@ function saveSkipState() {
  * @param {*} msg Message containing the pattern data
  */
 function drawActiveNotes(msg){
+    bar_visualization = settings["full_bar_view"]
     for (let beatIndex = 0; beatIndex < msg.data.length; beatIndex++) {
+        let goal_note = msg.data[beatIndex][0];
         for (const note in midi_names) {
+            const noteValue = Number(note);
+            
+            // Decide if full-bar or only one-brick visualisation is used
+            trigger = msg.data[beatIndex].includes(noteValue)
+            if (bar_visualization){
+                trigger = noteValue <= goal_note
+            }
+                
             const cell = document.querySelector(
             `.cell[data-beat="${beatIndex}"][data-row-note="${note}"]`
             );
             if (!cell) continue;
-            if (msg.data[beatIndex].includes(Number(note))) {
+            if (trigger) {
                 cell.classList.add("active");
             } else {
                 cell.classList.remove("active");
@@ -150,31 +162,3 @@ function drawCurrentNotes(msg){
 }
 
 setupTableSkip();
-
-ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data).data;
-
-    if (msg.type === "pattern") {
-        message = "Erkanntes Notenblatt: ";
-        msg.data.forEach(list => { 
-            message += list.map(n => midiToName(n)).join("+") + "; ";
-        });
-        logPattern(message);
-        drawActiveNotes(msg);
-        drawSheet(msg);
-    }
-
-    if (msg.type === "step") {
-        logStep("Gespielte Note(n): " + msg.data.map(n => midiToName(n)).join("+"));
-        drawCurrentNotes(msg);
-    }
-};
-
-ws.onopen = () => {
-    logMessage("Dashboard gestartet\u{1F44B}"); // winking hand
-    logMessage("Drücke \"Start\" um loszulegen.\u{1F3B6}"); // musical notes
-};
-ws.onerror = (e) => {
-    logMessage("Beim Dashboard ist ein Fehler aufgetreten: " + e , "red");
-};
-

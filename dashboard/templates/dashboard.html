@@ -12,8 +12,8 @@
 </head>
 
 <body>
-  <h1>AUDIOBRIX DASHBOARD</h1>
-
+  <h1 style="margin:0; margin-top: 16px;">AUDIOBRIX DASHBOARD</h1>
+  <p style="margin:0; margin-bottom: 16px;">Alpha Version © <a href="https://waldhoer.org" target=blank>Merlin Waldhör</a> 2025</p>
   <div class="dashboard">
     <div class="grid-wrapper">
       <div class="grid-container">
@@ -68,7 +68,6 @@
       <div class="button-group" style="padding-bottom: 0px; padding-top: 0;">
         <script>
           setInstrumentButton();
-          checkDmiStatus();
         </script>
         <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier">
           <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
@@ -94,9 +93,13 @@
       <script>updateSpeed(true);</script>
 
       <script src="/static/js/update_table.js"></script>
+      <script src="/static/js/event_handler.js"></script>
   </div>
 
   <div class="floating-menu-vertical">
+    <button class="button" onclick="location.href='https://dev.waldhoer.org/audiobrix'">
+      <p><i class="fa-solid fa-globe"></i> &nbsp; AudioBrix Website</p>
+    </button>
     <button class="button" onclick="location.href='/settings'">
       <p><i class="fa-solid fa-sliders"></i> &nbsp; Einstellungen</p>
     </button>
@@ -108,7 +111,7 @@
 <div class="floating-notification-vertical" id="notificationContainer"></div>
   <a href="https://univie.ac.at">
     <img src="/static/images/univie_logo.png" class="logo" style="width:200px;">
-  </a> 
+  </a>
 </div>
 
   

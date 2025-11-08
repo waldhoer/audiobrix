@@ -4,6 +4,7 @@ from termcolor import colored
 from pythonosc import udp_client
 from app.core.helpers import Helpers
 from app.core.exceptions import *
+from app.core.events import Event
 
 class DMI:
     """
@@ -12,12 +13,17 @@ class DMI:
 
     def __init__(self):
         self.config = Helpers.config
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
 
         self.rounding_base = 5
         self.notes = []
         self.lock = threading.Lock()
 
+    def initialize(self) -> bool:
+        """
+        Initializes the serial connection - Must be called after the DMI __init__ due to timing reasons for blinker.
+        @return: True if the initialization was successful, false otherwise
+        """
         try:
             self.arduino = serial.Serial(
                 port=self.config["arduino_port"],
@@ -31,9 +37,11 @@ class DMI:
             )
 
         except serial.SerialException as e:
-            self.status = Helpers.Status.ERROR
-            raise AudiobrixUsbError(e)
-
+            Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
+            return False
+        
+        return True
+    
     def base_round(self, value) -> int:
         """
         Rounds a given value to the nearest base.
@@ -46,7 +54,8 @@ class DMI:
         Reads pressed button JSON data from Arduino in a loop.
         The received messages are lists of dicts formatted like [{"Expander":(e.g. 0x22), "Column":(A or B), "Pin":(e.g. 3))}]
         """
-        while self.status == Helpers.Status.ACTIVE:
+        first = True
+        while self.running == True:
             try:
                 raw = self.arduino.readline()
 
@@ -56,16 +65,26 @@ class DMI:
                         raw = raw.decode('utf-8').strip()
                         break
                     except UnicodeDecodeError as d:
-                        print(colored(f"Error while Decoding: {d}. Retry ({i}/{tolerance})", "red"))
+                        Event.warning.send(
+                            self, 
+                            service=Event.DMI, 
+                            message=str(f"Error while Decoding: {d}. Retry ({i}/{tolerance})")
+                        )
                         raw = self.arduino.readline() # Read next line for next iteration
-                    
+
+                # We only really know if the DMI is active once it ran at leas once sucessfully
+                if first:
+                    first = False
+                    Event.active.send(self, service=Event.DMI) 
             except serial.SerialException as e:
-                self.status = Helpers.Status.DISCONNECTED
-                raise AudiobrixUsbKilledError(e)
+                self.running = False
+                Event.disconnected.send(self, service=Event.DMI, message=str(AudiobrixUsbKilledError(e)))
+                break
 
             except AttributeError as e:
-                self.status = Helpers.Status.ERROR
-                raise AudiobrixUsbError(e)
+                self.running = False
+                Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
+                break
 
             if not raw or raw ==  "": 
                 continue # skip broken messages
@@ -73,7 +92,12 @@ class DMI:
             try:
                 pressed = json.loads(raw) 
             except json.decoder.JSONDecodeError as e:
-                print(colored(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw}", "red"))
+                if (Helpers.config["verbose"]):
+                    Event.warning.send(
+                        self, 
+                        service=Event.DMI, 
+                        message=str(f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}")
+                    )
                 continue # skip broken messages
 
             notes = []
@@ -112,19 +136,20 @@ class DMI:
         """
         Runs the DMI thread until it is terminated using the stop() method.
         """
-        self.status = Helpers.Status.ACTIVE
+        self.running = True
         threading.Thread(target=self.capture, daemon=True).start()
         
         try:
-            while self.status == Helpers.Status.ACTIVE:
+            while self.running == True:
                 time.sleep(1)
         except KeyboardInterrupt:
             self.stop()
 
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
 
     def stop(self) -> None:
         """
         Terminates the DMI thread greacefully.
         """
-        self.status = Helpers.Status.INACTIVE
+        self.running = False
+        Event.inactive.send(self, service=Event.DMI)

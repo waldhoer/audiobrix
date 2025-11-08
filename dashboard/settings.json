@@ -3,8 +3,8 @@
     "arduino_baudrate": 115200,
     "midi_client_address": "127.0.0.1",
     "midi_client_port": 4560,
-    "bpm_playing_speed": 150,
-    "verbose": true,
+    "bpm_playing_speed": 134,
+    "verbose": false,
     "note_amount": 8,
     "application_name": "AudioBrix",
     "visualizer_address": "127.0.0.1",
@@ -12,5 +12,6 @@
     "dashboard_port": 8000,
     "instrument": 0,
     "midi_device_id": 0,
+    "full_bar_view": false,
     "skip": []
 }

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 
 from app.service.DMI import DMI
 from app.core.helpers import Helpers
+from app.core.events import Event
 
 router = APIRouter()
 
@@ -11,15 +12,16 @@ async def start(request: Request):
     """
     Endpoint for starting the brick recognition service.
     """
-    if request.app.state.dmi is None or request.app.state.dmi.status != Helpers.Status.ACTIVE:
+    if request.app.state.dmi == None:
+        request.app.state.dmi = DMI()
+
+    if request.app.state.dmi.running == False:
         try:
-            dmi = DMI()
-            request.app.state.dmi = dmi
-            threading.Thread(target=dmi.run, daemon=True).start()
-            return {"status": Helpers.Status.ACTIVE}
+            if(request.app.state.dmi.initialize()):
+                threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
         except Exception as e:
-            return {"status": Helpers.Status.ERROR, "message": str(e)}
-    return {"status": Helpers.Status.ACTIVE}
+            Event.error.send("API_Start",service="DMI",message=str(e))
+    Event.warning.send("API_Start",service="DMI",message="The DMI is already active.")
 
 @router.get("/stop")
 async def stop(request: Request):
@@ -29,7 +31,6 @@ async def stop(request: Request):
     if request.app.state.dmi is not None:
         request.app.state.dmi.stop()
         request.app.state.dmi = None
-    return {"status": Helpers.Status.INACTIVE}
 
 @router.post("/skipped")
 async def skip(request: Request):
@@ -38,7 +39,6 @@ async def skip(request: Request):
     """
     data = await request.json()
     if "skip" not in data:
-        return {"status": Helpers.Status.ERROR, "message" : "Skip parameter missing"}
+        Event.warning.send("API_Skip",service="DMI",message="Missing skip parameter.")
     
     Helpers.write("skip",data["skip"])
-    return {"status": Helpers.Status.OK}
