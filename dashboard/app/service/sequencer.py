@@ -1,5 +1,5 @@
 from pygame.midi import MidiException
-from app.service.audio import MidiPlayer
+from app.service.midi_player import MidiPlayer
 import time, json, threading
 from pythonosc import udp_client
 from app.core.events import Event
