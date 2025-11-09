@@ -17,5 +17,6 @@
     "instrument": 0,
     "midi_device_id": 0,
     "full_bar_view": false,
+    "show_tutorial": false,
     "skip": []
 }

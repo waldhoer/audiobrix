@@ -6,9 +6,11 @@
   <title>Audiobrix Dashboard</title>
   <link rel="icon" href="/static/images/favicon.ico">
   <link rel="stylesheet" href="/static/styles/style.css">
+  <link rel="stylesheet" href="/static/styles/introjs.min.css">
   <script src="/static/js/dashboard.js"></script>
   <script src="/static/js/vexflow.js"></script>
   <script src="/static/fontawesome/js/all.min.js"></script>
+  <script src="/static/js/intro.min.js"></script>
 </head>
 
 <body>
@@ -72,6 +74,29 @@
 
                 tbody.appendChild(tr);
               }
+
+              if (settings["show_tutorial"]){
+                settings["show_tutorial"] = false;
+                await writeSettings(settings);
+
+                introJs().setOptions({
+                  steps: [
+                    { element: '#grid', intro: 'Hier werden die erkannten Blöcke angezeigt. Durch klicken auf die einzelnen Blöcke können Noten stummgeschaltet werden.' },
+                    { element: '#dmiButton', intro: 'Hier wird die Notenblockerkennung gestartet und gestoppt. Damit werden die erkannten Blöcke angezeigt.' },
+                    { element: '#seqButton', intro: 'Hier wird der Sequencer gestartet und gestoppt. Damit werden die Noten abgespielt und hörbar gemacht.' },
+                    { element: '#instrument_btn', intro: 'Hier kann zwischen unterschiedlichen Instrumenten gewählt werden.' },
+                    { element: '#speed_slider', intro: 'Hier kann die Geschwindigkeit von links (langsam) nach rechts (schnell) eingestellt werden.' },
+                    { element: '#settings_btn', intro: 'In den Einstellungen können wichtige Parameter festgelegt werden.' },
+                    { element: '#toggleDetailsButton', intro: 'Hier kann die detaillierte Ansicht ein- oder ausgeblendet werden.' }
+                  ],
+                  showBullets: false,
+                  showProgress: true,
+                  nextLabel: 'Weiter',
+                  prevLabel: 'Zurück',
+                  doneLabel: 'Fertig 🎉'
+                }).start();
+
+              }
             }
 
             generate_table();
@@ -95,7 +120,7 @@
 
       </div>
       
-      <div class="button-group" style="padding-bottom: 0px; padding-top: 0;">
+      <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
         <script>
           setInstrumentButton();
         </script>
@@ -116,7 +141,7 @@
         </button>
       </div>
       
-      <div class="slidecontainer">
+      <div class="slidecontainer" id="speed_slider">
         <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
       </div>
       <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
@@ -130,7 +155,7 @@
     <button class="button" onclick="location.href='https://dev.waldhoer.org/audiobrix'">
       <p><i class="fa-solid fa-globe"></i> &nbsp; AudioBrix Website</p>
     </button>
-    <button class="button" onclick="location.href='/settings'">
+    <button class="button" id="settings_btn" onclick="location.href='/settings'">
       <p><i class="fa-solid fa-sliders"></i> &nbsp; Einstellungen</p>
     </button>
     <button class="button" id="toggleDetailsButton" onclick="toggleDetails()">

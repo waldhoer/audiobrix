@@ -88,6 +88,11 @@
 
     "max_note_height" :{
         "text" : "Definiert die maximale Anzahl an (in 2x2er Schritten), die in einer Spalte gelegt werden können.",
-        "default" : 9
+        "default" : "9"
+    },
+
+    "show_tutorial" :{
+        "text" : "Gibt an, ob das Tutorial beim nächsten Dashboard-Besuch gestartet werden soll. Wird jedes mal danach automatisch deaktiviert.",
+        "default" : "false"
     }
 }
