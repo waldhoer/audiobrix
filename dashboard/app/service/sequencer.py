@@ -92,9 +92,9 @@ class Sequencer:
                 "step" : step,
                 "data" : played_notes
             }
-            self.dashboard_client.send_message("/dashboard", (json.dumps(message) + "\n").encode()) 
+            self.dashboard_client.send_message(Helpers.config["osc_own_name"], (json.dumps(message) + "\n").encode()) 
 
-            if self.midi_player is not None:
+            if self.midi_player is not None and not Helpers.config["use_remote_osc"]:
                 try:
                     self.midi_player.play_note(played_notes, duration=(60.0 / self.bpm)) # quarter note
                 except (RuntimeError, MidiException):

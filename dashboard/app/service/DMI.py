@@ -31,9 +31,9 @@ class DMI:
                 timeout=.1
             )
 
-            self.dashboard_client = udp_client.SimpleUDPClient(
-                self.config["visualizer_address"],
-                self.config["visualizer_port"]
+            self.internal_osc_receiver = udp_client.SimpleUDPClient(
+                self.config["osc_own_address"],
+                self.config["osc_own_port"]
             )
 
         except serial.SerialException as e:
@@ -116,7 +116,7 @@ class DMI:
                 self.notes = notes
 
             message = {"type" : "pattern", "data" : notes}
-            self.dashboard_client.send_message("/dashboard",(json.dumps(message) + "\n").encode())
+            self.internal_osc_receiver.send_message(Helpers.config["osc_own_name"],(json.dumps(message) + "\n").encode())
             
 
     def resistance_to_midi(self, bricks_amount: int) -> int:
@@ -130,9 +130,10 @@ class DMI:
         if (bricks_amount >= len(whole_tones)):
             return whole_tones[len(whole_tones) - 1] 
         if (bricks_amount > Helpers.config["max_note_height"]):
-            Event.warning.send(self, service=Event.DMI, 
-                message=f"Die gemessene Notenhöhe ({bricks_amount}) überschreitet das max_note_height limit ({Helpers.config["max_note_height"]})."
-                )
+            if (Helpers.config["verbose"]):
+                Event.warning.send(self, service=Event.DMI, 
+                    message=f"Die gemessene Notenhöhe ({bricks_amount}) überschreitet das max_note_height limit ({Helpers.config["max_note_height"]})."
+                    )
         return whole_tones[bricks_amount-1]
     
     def run(self) -> None:
