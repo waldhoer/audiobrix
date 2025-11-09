@@ -8,7 +8,6 @@ from app.core.helpers import Helpers
 from app.service.osc_manager import OscManager
 from app.service.web_socket_manager import WebSocketManager
 from app.api import html as htmlApi, dmi as dmiApi, sequencer as sequencerApi, config as configApi
-from app.core.events import Event
 from pygame import midi
 from app.core.event_bridge import EventBridge
 from app.service.DMI import DMI
