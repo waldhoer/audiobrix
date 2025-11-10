@@ -1,0 +1,98 @@
+{
+    "arduino_port": {
+        "text" : "Der USB Port an dem der Arduino verbunden ist.",
+        "default" : "COM3",
+        "systest" : "COM"
+    },
+
+    "arduino_baudrate":{
+        "text" : "Die Übertragungsrate (Abtastgeschwindigkeit) des Arduinos.",
+        "default" : "115200"
+    },
+
+    "bpm_playing_speed": {
+        "text" : "Die Spielgeschwindigkeit des Instruments in BPM.",
+        "default" : "140"
+    },
+
+    "verbose": {
+        "text" : "true für eine genaue Konsolenausgabe, false für eine vereinfachte Ausgabe.",
+        "default" : "true"
+    },
+
+    "application_name": {
+        "text" : "Der Name der Anwendung.",
+        "default" : "AudioBrix"
+    },
+
+    "osc_remote_address": {
+        "text" : "Die Adresse vom remote OSC Empfänger (z.B. Externer DAW). Wir nur genutzt, falls use_remote_osc aktiv ist.",
+        "default" : "127.0.0.1"
+    },
+
+    "osc_remote_port": {
+        "text" : "Der Port vom remote OSC Empfänger (z.B. Externer DAW). Wir nur genutzt, falls use_remote_osc aktiv ist.",
+        "default" : "4560"
+    },
+
+    "osc_remote_name": {
+        "text" : "Der OSC Adressname vom remote OSC Empfänger (z.B. Externer DAW). Wir nur genutzt, falls use_remote_osc aktiv ist.",
+        "default" : "/remote_osc"
+    },
+
+    "osc_own_address": {
+        "text" : "Die Adresse vom internen OSC Empfänger (Für Visualisierung und/oder Musikspielen)",
+        "default" : "127.0.0.1"
+    },
+
+    "osc_own_port": {
+        "text" : "Der Port vom internen OSC Empfänger (Für Visualisierung und/oder Musikspielen)",
+        "default" : "4562"
+    },
+
+    "osc_own_name": {
+        "text" : "Der OSC Adressname vom internen OSC Empfänger (Für Visualisierung und/oder Musikspielen)",
+        "default" : "/internal_osc"
+    },
+
+    "use_remote_osc": {
+        "text" : "Legt fest, ob die interne Musikausgabe durch das Senden an eine externe DAW ersetzt werden soll.",
+        "default" : "false"
+    },
+
+    "dashboard_port": {
+        "text" : "Die Port-Nummer Adresse des Dashboard (HTTP Port).",
+        "default" : "8000"
+    },
+    
+    "instrument": {
+        "text" : "Instrumenten ID (General MIDI ID)",
+        "default" : "0"
+    },
+
+    "midi_device_id": {
+        "text" : "Die Geräte ID vom MIDI Device. Sollte 0 oder 1 nicht funktionieren, muss ggf. MIDI Software installiert werden.",
+        "default" : "0",
+        "systest" : "MIDI"
+    },
+
+    "note_amount": {
+        "text" : "Die Anzahl an möglichen Taktschlägen.",
+        "default" : "8"
+    },
+
+    "full_bar_view": {
+        "text" : "Legt fest, ob die Blockdarstellung nur die höchste Note pro Schlag oder alle tatsächlich gelegten Blöcke pro Schlag angezeigt werden.",
+        "default" : "true"
+    },
+
+    "max_note_height" :{
+        "text" : "Definiert die maximale Anzahl an (in 2x2er Schritten), die in einer Spalte gelegt werden können.",
+        "default" : "9"
+    },
+
+    "show_tutorial" :{
+        "text" : "Gibt an, ob das Tutorial beim nächsten Dashboard-Besuch gestartet werden soll. Wird jedes mal danach automatisch deaktiviert.",
+        "default" : "false"
+    }
+}
