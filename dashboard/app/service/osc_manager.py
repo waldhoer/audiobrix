@@ -4,11 +4,22 @@ import json, asyncio, threading
 from app.service.web_socket_manager import WebSocketManager
 from app.core.helpers import Helpers
 
+
 class OscManager:
     """
     Manager class for OSC Processing and Sending.
     """
-    def __init__(self, in_address, in_port, out_address, out_port, state, ws_manager: WebSocketManager, loop: asyncio.AbstractEventLoop):
+
+    def __init__(
+        self,
+        in_address,
+        in_port,
+        out_address,
+        out_port,
+        state,
+        ws_manager: WebSocketManager,
+        loop: asyncio.AbstractEventLoop,
+    ):
         self.remote_osc_client = udp_client.SimpleUDPClient(out_address, out_port)
         self.in_address = in_address
         self.in_port = in_port
@@ -26,7 +37,7 @@ class OscManager:
 
     def run(self) -> None:
         """
-        Run by the OscManager thread, this method runs the osc server. 
+        Run by the OscManager thread, this method runs the osc server.
         """
         disp = dispatcher.Dispatcher()
         disp.map(Helpers.config["osc_own_name"], self.handler)
@@ -54,19 +65,21 @@ class OscManager:
             parsed = args
 
         # Feed directly DMI data if it is running
-        if (self.state.sequencer != None and parsed["type"] == "pattern"):
+        if self.state.sequencer != None and parsed["type"] == "pattern":
             self.pattern_cache = parsed["data"]
             self.state.sequencer.beats_pattern = parsed["data"]
 
         # Use cache if the DMI is not running
-        elif (self.state.sequencer != None and parsed["type"] != "pattern"):
+        elif self.state.sequencer != None and parsed["type"] != "pattern":
             self.state.sequencer.beats_pattern = self.pattern_cache
 
         message = {"address": address, "data": parsed}
         asyncio.run_coroutine_threadsafe(self.ws_manager.broadcast(message), self.loop)
 
-        if (Helpers.config["use_remote_osc"]):
+        if Helpers.config["use_remote_osc"]:
             try:
-                self.remote_osc_client.send_message(Helpers.config["osc_remote_name"], parsed["data"]) 
+                self.remote_osc_client.send_message(
+                    Helpers.config["osc_remote_name"], parsed["data"]
+                )
             except Exception as e:
                 print(f"Failed to send OSC to external target: {e}")

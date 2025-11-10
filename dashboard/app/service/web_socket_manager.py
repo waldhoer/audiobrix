@@ -1,10 +1,12 @@
 from fastapi import WebSocket
 
+
 class WebSocketManager:
     """
     Manager class for WebSocket handling.
-    Responsible for dis/connecting and broadcasting 
+    Responsible for dis/connecting and broadcasting
     """
+
     def __init__(self):
         self.clients = set()
 

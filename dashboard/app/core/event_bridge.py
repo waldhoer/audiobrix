@@ -1,21 +1,23 @@
 import asyncio
 from collections import deque
 
+
 class EventBridge:
     """
     Connects Blinker signals to WebSocket broadcasts.
     Automatically sends the internal signals to the websocket manager.
-    This can be then used directly in frontend. 
+    This can be then used directly in frontend.
 
     EventBridge must be a Singleton to avoid duplicate connection.
     """
+
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
     def __init__(self, ws_manager):
         if getattr(self, "_initialized", False):
             return
@@ -58,7 +60,11 @@ class EventBridge:
                     self.ws_manager.broadcast(message), self.loop
                 )
                 future.add_done_callback(
-                    lambda fut: print(f"[EventBridge] Broadcast error: {fut.exception()}") if fut.exception() else None
+                    lambda fut: (
+                        print(f"[EventBridge] Broadcast error: {fut.exception()}")
+                        if fut.exception()
+                        else None
+                    )
                 )
         except Exception as e:
             print(f"[EventBridge] Unexpected error: {e}")
@@ -66,10 +72,12 @@ class EventBridge:
     def make_handler(self, signal):
         """
         Creates an event handler foir each signal"""
+
         def handle_event(sender, **kwargs):
             message = {"type": "event", "name": signal.name, "body": kwargs}
             print(f"[{signal.name}]: {kwargs}")
             self._schedule_broadcast(message)
+
         return handle_event
 
     def connect_signals(self):
@@ -81,7 +89,11 @@ class EventBridge:
 
         for name, sig in Event.__dict__.items():
             # filter signals which have not been connected yet
-            if hasattr(sig, "connect") and sig not in self._connected_signals and not sig.has_receivers_for(self.make_handler(sig)): 
+            if (
+                hasattr(sig, "connect")
+                and sig not in self._connected_signals
+                and not sig.has_receivers_for(self.make_handler(sig))
+            ):
                 sig.connect(self.make_handler(sig), weak=False)
                 self._connected_signals.add(sig)
                 if Helpers.config.get("verbose"):

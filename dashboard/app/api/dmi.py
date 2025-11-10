@@ -7,6 +7,7 @@ from app.core.events import Event
 
 router = APIRouter()
 
+
 @router.get("/start")
 async def start(request: Request):
     """
@@ -17,12 +18,15 @@ async def start(request: Request):
 
     if request.app.state.dmi.running == False:
         try:
-            if(request.app.state.dmi.initialize()):
+            if request.app.state.dmi.initialize():
                 threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
         except Exception as e:
-            Event.error.send("API_Start",service="DMI",message=str(e))
+            Event.error.send("API_Start", service="DMI", message=str(e))
     else:
-        Event.warning.send("API_Start",service="DMI",message="The DMI is already active.")
+        Event.warning.send(
+            "API_Start", service="DMI", message="The DMI is already active."
+        )
+
 
 @router.get("/stop")
 async def stop(request: Request):
@@ -33,6 +37,7 @@ async def stop(request: Request):
         request.app.state.dmi.stop()
         request.app.state.dmi = None
 
+
 @router.post("/skipped")
 async def skip(request: Request):
     """
@@ -40,6 +45,6 @@ async def skip(request: Request):
     """
     data = await request.json()
     if "skip" not in data:
-        Event.warning.send("API_Skip",service="DMI",message="Missing skip parameter.")
-    
-    Helpers.write("skip",data["skip"])
+        Event.warning.send("API_Skip", service="DMI", message="Missing skip parameter.")
+
+    Helpers.write("skip", data["skip"])

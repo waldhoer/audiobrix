@@ -1,9 +1,11 @@
 from blinker import signal
 
+
 class _Events:
     """
     Singleton class containing all signals for the blinker event messaging.
     """
+
     def __init__(self):
         self.active = signal("active")
         self.inactive = signal("inactive")
@@ -18,5 +20,6 @@ class _Events:
 
     DMI = "DMI"
     SEQ = "Sequencer"
-    
+
+
 Event = _Events()
