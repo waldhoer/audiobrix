@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, WebSocket
@@ -70,6 +70,4 @@ async def websocket_endpoint(ws: WebSocket):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "main:app", host="127.0.0.1", port=config["dashboard_port"], reload=True
-    )
+    uvicorn.run(app, host="127.0.0.1", port=config["dashboard_port"])

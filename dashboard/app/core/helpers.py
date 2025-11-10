@@ -1,19 +1,24 @@
 from pathlib import Path
-import json, subprocess
+import json, subprocess, sys
 from pygame import midi
 
 
+def base_path() -> Path:
+    """Return the base path depending on whether we're running from source or PyInstaller."""
+    if getattr(sys, "frozen", False):
+        # Running from PyInstaller
+        return Path(sys.executable).parent
+    else:
+        # Running development / python directly
+        return Path(__file__).resolve().parent.parent.parent
+
+
+def resource_path(relative_path: str) -> Path:
+    """Get absolute path to a resource inside or outside the bundle."""
+    return base_path() / relative_path
+
+
 class Helpers:
-    descriptions = None
-
-    path = Path(__file__).resolve()
-    config_path = path.parent.parent.parent / "settings.json"
-    config_description_path = path.parent.parent.parent / "settings_dscr.json"
-
-    with open(config_path, "r", encoding="utf-8") as config_file:
-        config = json.load(config_file)
-    with open(config_description_path, "r", encoding="utf-8") as description_file:
-        descriptions = json.load(description_file)
 
     @classmethod
     def write(cls, key: str, value):
@@ -65,3 +70,14 @@ class Helpers:
                 str(i) + ": " + info[0].decode("utf-8") + "-" + info[1].decode("utf-8")
             )
         return devices
+
+    descriptions = None
+
+    path = Path(__file__).resolve()
+    config_path = resource_path("settings.json")
+    config_description_path = resource_path("settings_dscr.json")
+
+    with open(config_path, "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
+    with open(config_description_path, "r", encoding="utf-8") as description_file:
+        descriptions = json.load(description_file)
