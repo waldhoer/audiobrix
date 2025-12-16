@@ -7,7 +7,7 @@
     "note_amount": 8,
     "max_note_height": 9,
     "application_name": "AudioBrix",
-    "instrument": 0,
+    "instrument": 10,
     "full_bar_view": false,
     "show_tutorial": false,
     "use_remote_osc": false,

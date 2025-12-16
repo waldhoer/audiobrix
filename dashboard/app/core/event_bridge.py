@@ -1,5 +1,6 @@
 import asyncio
 from collections import deque
+import logging
 
 
 class EventBridge:
@@ -26,6 +27,7 @@ class EventBridge:
         self.pending_events = deque()
         self._connected_signals = set()
         self.connect_signals()
+        self.logger = logging.getLogger("EventBridge")
         print("[EventBridge] EventBridge initialized")
 
     def set_loop(self, loop: asyncio.AbstractEventLoop):
@@ -75,7 +77,7 @@ class EventBridge:
 
         def handle_event(sender, **kwargs):
             message = {"type": "event", "name": signal.name, "body": kwargs}
-            print(f"[{signal.name}]: {kwargs}")
+            self.logger.info("[%s] %s", signal.name, kwargs)
             self._schedule_broadcast(message)
 
         return handle_event
@@ -97,4 +99,4 @@ class EventBridge:
                 sig.connect(self.make_handler(sig), weak=False)
                 self._connected_signals.add(sig)
                 if Helpers.config.get("verbose"):
-                    print(f"[EventBridge] Connected signal: {sig.name}")
+                    self.logger.info(f"[EventBridge] Connected signal: {sig.name}")

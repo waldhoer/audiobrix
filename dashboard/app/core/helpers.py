@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import json, subprocess, sys
 from pygame import midi
@@ -70,6 +71,24 @@ class Helpers:
                 str(i) + ": " + info[0].decode("utf-8") + "-" + info[1].decode("utf-8")
             )
         return devices
+
+    @staticmethod
+    def setup_logging():
+        """
+        Sets up basic logging (to file and console). To be called on startup once.
+        """
+        log_dir = base_path() / "logs"
+        log_dir.mkdir(exist_ok=True)
+        log_file = log_dir / "events.log"
+
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            handlers=[
+                logging.FileHandler(log_file, encoding="utf-8"),
+                logging.StreamHandler(),  # added for console output
+            ],
+        )
 
     descriptions = None
 

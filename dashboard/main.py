@@ -26,6 +26,8 @@ dashboard = udp_client.SimpleUDPClient(
     config["osc_own_address"], config["osc_own_port"]
 )
 
+Helpers.setup_logging()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
