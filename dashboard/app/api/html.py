@@ -31,3 +31,11 @@ async def read_settings(request: Request):
     Serves the settings HTML page.
     """
     return templates.TemplateResponse("settings.html", {"request": request})
+
+
+@router.get("/setup", response_class=HTMLResponse)
+async def read_setup(request: Request):
+    """
+    Serves the setup HTML page.
+    """
+    return templates.TemplateResponse("setup.html", {"request": request})
