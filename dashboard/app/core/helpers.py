@@ -1,7 +1,9 @@
-import logging
+import logging, re
 from pathlib import Path
 import json, subprocess, sys
 from pygame import midi
+import serial.tools.list_ports
+from app.core.events import Event
 
 
 def base_path() -> Path:
@@ -40,21 +42,51 @@ class Helpers:
             json.dump(cls.config, config_file, indent=4)
 
     @staticmethod
-    def list_serial_ports() -> list[str]:
+    def list_serial_ports() -> list:
         """
         Lists all available COMs on Windows.
         Results can be used to identify which COM connection should be used for the arduino.
         """
-        command = "Get-CimInstance Win32_SerialPort | Select-Object DeviceID, Name, Description"
-        result = str(
-            subprocess.check_output(["powershell", "-Command", command], text=True)
-        )  # CMD wont work; PS required!
+        ports = list(serial.tools.list_ports.comports())
+        result = []
+        for p in ports:
+            candidate = False
 
-        if not result:
-            return []
+            try:
+                # Checks for VID  if they are set (often null)
+                if p.vid == 0x2341:
+                    candidate = True
 
-        lines = result.split("\n")
-        return [x for x in lines[3:] if x.strip()]  # Remove seperators and labels
+                # Checks for VID in HWID string (can create false positives!)
+                if p.hwid and "2341" in p.hwid:
+                    candidate = True
+
+                # Checks for VID / PID if windows embeds it in a string
+                match = re.search(r"VID&([0-9A-Fa-f]+)_PID&([0-9A-Fa-f]+)", p.hwid)
+                if match:
+                    if int(match.group(1), 16) == 0x2341:
+                        candidate = True
+
+                result.append(
+                    {
+                        "device": p.device,
+                        "name": p.device,
+                        "description": p.description,
+                        "hwid": p.hwid,
+                        "vid": p.vid,
+                        "pid": p.pid,
+                        "serial_number": p.serial_number,
+                        "location": p.location,
+                        "manufacturer": p.manufacturer,
+                        "product": p.product,
+                        "interface": p.interface,
+                        "candidate": candidate,
+                    }
+                )
+            except Exception as e:
+                Event.error.send("Comtest_Failed", service="systest", message=str(e))
+
+        return result
 
     @staticmethod
     def list_midi_devices() -> list[str]:

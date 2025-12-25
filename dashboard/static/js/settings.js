@@ -83,6 +83,23 @@ function copyDefaultValue(name){
 }
 
 /**
+ * Fetches and displays the system test results
+ */
+async function getSystestResults(){
+    const systest = await fetch_json("http://localhost:8000/systest");
+    let textbox = document.querySelector("#systest_results");
+
+    systest.COM.forEach(port => {
+        console.log(port);
+        if (port.candidate === true){
+            textbox.innerHTML += "<b>" + port.device + " - " + port.description + " - " + port.hwid + "</b><br><br>";
+        } else {
+            textbox.innerHTML += port.device + " - " + port.description + " - " + port.hwid + "<br><br>";
+        }
+    });
+}
+
+/**
  * Loads the current table settings and draws the (converted) values into the table
  */
 async function loadTableSettings() {
