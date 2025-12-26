@@ -16,54 +16,58 @@
     <h1 style="padding-bottom: 10px;">AUDIOBRIX EINRICHTUNG</h1>
     <img src="/static/images/icon_setup.png" alt="Audiobrix Logo" width="300"/>
 
-    <div id="systest_loading">
-      <img src="/static/images/loader.gif" alt="Loading" width="300px" id="systest_loading"/>
-      <p>System wird analysiert...</p>
+    <div class="setup-container">
+      <div id="systest_loading">
+        <img src="/static/images/loader.gif" alt="Loading" width="300px" id="systest_loading"/>
+        <p>System wird analysiert...</p>
+      </div>
+
+      <form id="setup_form" style="display:none;">
+
+      <!-- COM Section -->
+      <div class="setup-section">
+        <p id="systest_results" class="setup-label">
+          Vorhandene Ports werden gescannt…
+        </p>
+
+        <p id="systest_results_proposal"
+          class="setup-proposal"
+          style="display:none;">
+        </p>
+
+        <select name="select_port"
+                id="select_port"
+                class="setup-select">
+        </select>
+      </div>
+
+      <br>
+      <div class="setup-divider"></div>
+      <br>
+
+      <!-- MIDI Section -->
+      <div class="setup-section">
+        <p id="midi_results" class="setup-label">
+          Wähle hier den passenden MIDI-Anschluss. In der Regel funktioniert der Microsoft MIDI Mapper (0). 
+          Sollte 0 oder 1 nicht funktionieren, installiere bitte <a href="https://coolsoft.altervista.org/en/virtualmidisynth">VirtualMIDISynth</a>
+        </p>
+
+        <p id="midi_results_proposal"
+          class="setup-proposal"
+          style="display:none;">
+        </p>
+        
+        <select name="select_midi"
+                id="select_midi"
+                class="setup-select">
+        </select>
+      </div>
+
+      <br>
+    </form>
     </div>
 
-    <form id="setup_form" class="setup-container" style="display:none;">
-
-    <!-- COM Section -->
-    <div class="setup-section">
-      <p id="systest_results" class="setup-label">
-        Vorhandene Ports werden gescannt…
-      </p>
-
-      <p id="systest_results_proposal"
-        class="setup-proposal"
-        style="display:none;">
-      </p>
-
-      <select name="select_port"
-              id="select_port"
-              class="setup-select">
-      </select>
-    </div>
-
-    <br>
-    <div class="setup-divider"></div>
-    <br>
-
-    <!-- MIDI Section -->
-    <div class="setup-section">
-      <p id="midi_results" class="setup-label">
-        Wähle hier den passenden MIDI-Anschluss.
-      </p>
-
-      <p id="midi_results_proposal"
-        class="setup-proposal"
-        style="display:none;">
-      </p>
-      
-      <select name="select_midi"
-              id="select_midi"
-              class="setup-select">
-      </select>
-    </div>
-
-    <br>
-  </form>
-  <div class="button-group">
+  <div class="button-group" id="save_button" style="display:none;">
     <button class="button button-green" onclick="saveSetup()">
       Einstellungen Speichern und Fortfahren
     </button>

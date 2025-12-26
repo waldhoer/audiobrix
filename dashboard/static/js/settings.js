@@ -131,6 +131,7 @@ async function getSystestResults(){
     const textbox_proposal = document.querySelector("#systest_results_proposal");
     const midi_textbox_proposal = document.querySelector("#midi_results_proposal");
     const loader = document.querySelector("#systest_loading");
+    const save_button = document.querySelector("#save_button");
 
     const form = document.querySelector("#setup_form");
     const select_port = document.querySelector("#select_port");
@@ -147,6 +148,7 @@ async function getSystestResults(){
     }
 
     textbox_proposal.style.display = "block";
+    save_button.style.display = "block";
     midi_textbox_proposal.style.display = "block";
     form.style.display = "block";
     loader.style.display = "none";
@@ -160,6 +162,8 @@ async function saveSetup() {
     console.log(select_port.value, select_midi.value);
     writeSingleSetting("arduino_port", select_port.value);
     writeSingleSetting("midi_device_id", Number(select_midi.value));
+
+    window.location.replace("/dashboard");
 }
 
 /**
