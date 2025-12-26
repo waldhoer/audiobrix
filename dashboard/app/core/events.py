@@ -11,6 +11,7 @@ class _Events:
         self.inactive = signal("inactive")
         self.error = signal("error")
         self.warning = signal("warning")
+        self.info = signal("info")
 
         self.disconnected = signal("disconnected")
 

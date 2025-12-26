@@ -92,9 +92,9 @@ async function getSystestResults(){
     systest.COM.forEach(port => {
         console.log(port);
         if (port.candidate === true){
-            textbox.innerHTML += "<b>" + port.device + " - " + port.description + " - " + port.hwid + "</b><br><br>";
+            textbox.innerHTML += "<b>" + port.device + " - " + port.description + " - " + port.hwid + " - " + port.runnable +  "</b><br><br>";
         } else {
-            textbox.innerHTML += port.device + " - " + port.description + " - " + port.hwid + "<br><br>";
+            textbox.innerHTML += port.device + " - " + port.description + " - " + port.hwid + " - " + port.runnable + "<br><br>";
         }
     });
 }

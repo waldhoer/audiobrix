@@ -1,9 +1,11 @@
 import logging, re
 from pathlib import Path
 import json, subprocess, sys
+import time
 from pygame import midi
 import serial.tools.list_ports
 from app.core.events import Event
+from app.core.exceptions import AudiobrixUsbError
 
 
 def base_path() -> Path:
@@ -42,10 +44,58 @@ class Helpers:
             json.dump(cls.config, config_file, indent=4)
 
     @staticmethod
+    def test_arduino_connection(port: str) -> bool:
+        """
+        Tests if an Arduino is reachable on the given port and the communication is working.
+        This immitates the DMI JSON communication with the arduino and is rather strict!
+        @return: True if the connection was successful, false otherwise
+        """
+        decode_tolerance = 5
+        Event.info.send(
+            "Comtest_Connection_Test", service="systest", message="Probing " + port
+        )
+        try:
+            with serial.Serial(
+                port, Helpers.config["arduino_baudrate"], timeout=0.1
+            ) as ser:
+                time.sleep(0.2)
+
+                for decode_attempt in range(3):
+                    raw = ser.readline()
+                    if not raw:
+                        continue
+
+                    # Avoids decode error crashes
+                    for decode_attempt in range(decode_tolerance):
+                        try:
+                            decoded = raw.decode("utf-8").strip()
+                            break
+                        except UnicodeDecodeError:
+                            raw = ser.readline()  # retry on decode failure
+                    else:
+                        continue
+
+                    if not decoded:
+                        continue
+
+                    # Test for real data
+                    try:
+                        json.loads(decoded)
+                        return True
+                    except json.JSONDecodeError:
+                        continue
+
+        except serial.SerialException:
+            return False
+
+        return False
+
+    @staticmethod
     def list_serial_ports() -> list:
         """
         Lists all available COMs on Windows.
         Results can be used to identify which COM connection should be used for the arduino.
+        @return: List of available COM ports with details.
         """
         ports = list(serial.tools.list_ports.comports())
         result = []
@@ -81,6 +131,7 @@ class Helpers:
                         "product": p.product,
                         "interface": p.interface,
                         "candidate": candidate,
+                        "runnable": Helpers.test_arduino_connection(p.device),
                     }
                 )
             except Exception as e:
