@@ -1,3 +1,12 @@
+/**
+ * Helper function for redirecting upon first load to the setup page
+ */
+async function redirect_first(){
+    const settings = await readSettings();
+    if (settings["show_tutorial"]){
+        window.location.replace("/setup");
+    } 
+}
 
 /**
  * Helper function to create selector options
