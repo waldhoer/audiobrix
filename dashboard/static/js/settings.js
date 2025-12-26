@@ -166,6 +166,40 @@ async function saveSetup() {
     window.location.replace("/dashboard");
 }
 
+async function appendSystestResultsToTable() {
+    const port_p = document.querySelector("#systest_arduino_port");
+    const midi_p = document.querySelector("#systest_midi_device_id");
+    
+    port_p.style.color = "blue";
+    port_p.style.margin = 0;
+    midi_p.style.color = "blue";
+    midi_p.style.margin = 0;
+
+    port_p.innerHTML = "Ergebnisse werden geladen..."
+    midi_p.innerHTML = "Ergebnisse werden geladen..."
+
+    const data = await fetch_json("http://localhost:8000/systest");
+
+    const candidateCOMs = data.COM
+        .filter(com => com.runnable === true)
+        .map(com => `${com.device} - ${com.description}`)
+        .join('<br>');
+
+    const candidateMIDIs = data.MIDI
+        .filter(midi => midi.candidate === true)
+        .map(midi => `${midi.index} - ${midi.name}`)
+        .join('<br>');
+
+    port_p.innerHTML = "<b> Empfohlene Einstellung(en):<br> </b>" 
+    + candidateCOMs + "<br><br><b>Insgesamt Verfügbar:<br></b>" 
+    + data.COM.map(com => `${com.device} - ${com.description}`).join('<br>');
+
+    midi_p.innerHTML = "<b> Empfohlene Einstellung(en):<br> </b>" 
+    + candidateMIDIs + "<br><br><b>Insgesamt Verfügbar:<br></b>" 
+    + data.MIDI.map(midi => `${midi.index} - ${midi.name}`).join('<br>');
+
+}
+
 /**
  * Loads the current table settings and draws the (converted) values into the table
  */
@@ -173,7 +207,6 @@ async function loadTableSettings() {
     const tbody = document.getElementById("settingsTableBody");
     descriptions = await readSettingsDescriptions();
     settings = await readSettings();
-    const systest = await fetch_json("http://localhost:8000/systest");
 
     console.log("Loaded settings:", settings);
 
@@ -188,6 +221,7 @@ async function loadTableSettings() {
         const cellDescription = document.createElement("td");
         const cellDescriptionText = document.createElement("p");
         const cellSystestText = document.createElement("p");
+        cellSystestText.id = "systest_" + name;
 
         // Skip all settings that do not have any description - This only affects the settings table, not the settings in general!
         if (!(name in descriptions)){
@@ -196,17 +230,6 @@ async function loadTableSettings() {
         } 
 
         cellDescriptionText.textContent = descriptions[name]["text"] || "No description available.";
-        
-        if ("systest" in descriptions[name]){
-            let suggestions = systest[descriptions[name]["systest"]]
-            if (suggestions.length == 0){
-                cellSystestText.textContent += "\u{26A0} Auf dem Gerät wurde keine COM Verbindung gefunden!";
-            } else {
-                cellSystestText.innerHTML += "\u{26A0} Verfügbar:<br>" + suggestions.join("<br>"); 
-            }
-        }
-        cellSystestText.style.color = "blue";
-        cellSystestText.style.margin = 0;
         cellDescriptionText.style.margin = 0;
         
         cellDescription.appendChild(cellDescriptionText);

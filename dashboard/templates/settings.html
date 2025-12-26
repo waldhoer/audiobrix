@@ -18,8 +18,13 @@
     <p style="padding-bottom: 12px;">
       Diese Einstellungen beeinflussen die Ausführung des Instruments und Dashboards.
       Unbedachte Änderungen können das Instrument beeinträchtigen.
-      Um einen Standardwert zu übernehmen, klicke auf den entsprechenden Eintrag in der Spalte "Standard".<br>
+      Um einen Standardwert zu übernehmen, klicke auf den entsprechenden Eintrag in der Spalte "Standard".
+      Klicke auf "Systemtest durchführen", um Details zu Arduino Port und MIDI zu bekommen.
     </p>
+
+    <button class="button button-green" onclick="appendSystestResultsToTable()" style="width: 450px; margin-bottom: 28px;">
+      <i class="fa-solid fa-rotate-right"></i>&nbsp; Systemtest durchführen und Empfehlungen anzeigen
+    </button>
 
     <table style="width:100%;" id="settingsTable">
         <thead>
