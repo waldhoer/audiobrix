@@ -95,17 +95,19 @@ async function createSelectorOptions(data, type, selector, proposal_text){
         console.log(port);
 
         const option = document.createElement("option");
-        option.value = port.device;
 
         let name, candidate = false;
         if (type === "COM"){
+            option.value = port.device;
             name = port.device + " - " + port.description;
             candidate = port.runnable === true;
         } else if (type === "MIDI"){
+            option.value = port.index;
             name = port.interface + " - " + port.name;
             candidate = port.candidate === true;
         } else {
             name = JSON.stringify(port);
+            console.warn("Unknown port type for selector options:", type);
         }
 
         if (candidate) {
@@ -149,6 +151,15 @@ async function getSystestResults(){
     form.style.display = "block";
     loader.style.display = "none";
 
+}
+
+async function saveSetup() {
+    const select_port = document.querySelector("#select_port");
+    const select_midi = document.querySelector("#select_midi");
+
+    console.log(select_port.value, select_midi.value);
+    writeSingleSetting("arduino_port", select_port.value);
+    writeSingleSetting("midi_device_id", Number(select_midi.value));
 }
 
 /**

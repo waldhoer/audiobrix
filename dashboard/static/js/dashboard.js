@@ -140,6 +140,24 @@ async function writeSettings(settings) {
 }
 
 /**
+ * Writes the given settings to the config file
+ * @param {*} settings The settings in JSON format
+ */
+async function writeSingleSetting(name, setting) {
+    try {
+        fetch('/config_single', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name, setting: setting})
+        });
+    } catch (error) {
+        console.error("Error fetching file:", error);
+    }
+}
+
+/**
  * Starts the DMI using the start endpoint
  */
 async function startDMI() {

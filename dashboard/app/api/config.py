@@ -32,6 +32,15 @@ async def write(request: Request):
     Helpers.writeAll(await request.json())
 
 
+@router.put("/config_single")
+async def writeSingle(request: Request):
+    """
+    Endpoint for writing single settings to file.
+    """
+    data = await request.json()
+    Helpers.write(data["name"], data["setting"])
+
+
 @router.get("/systest")
 async def systest(request: Request):
     """
