@@ -21,32 +21,58 @@
       <p>System wird analysiert...</p>
     </div>
 
-    <form id="setup_form" style="display: none;">
-      <p id="systest_results">Vorhandene Ports werden gescanned...</p>
-      <p id="systest_results_proposal" style="color:green; display: hidden;"></p>
-      <select name="select_port" id="select_port"></select>
+    <form id="setup_form" class="setup-container" style="display:none;">
 
-      <br><br>
+    <!-- COM Section -->
+    <div class="setup-section">
+      <p id="systest_results" class="setup-label">
+        Vorhandene Ports werden gescannt…
+      </p>
 
-      <p id="midi_results">Wähle hier den passenden MIDI-Anschluss.</p>
-      <p id="midi_results_proposal" style="color:green; display: hidden;"></p>
-      <select name="select_midi" id="select_midi"></select>
+      <p id="systest_results_proposal"
+        class="setup-proposal"
+        style="display:none;">
+      </p>
 
-      <br><br>
-      <input type="submit" value="Submit">
-    </form>
+      <select name="select_port"
+              id="select_port"
+              class="setup-select">
+      </select>
+    </div>
+
+    <br>
+    <div class="setup-divider"></div>
+    <br>
+    
+    <!-- MIDI Section -->
+    <div class="setup-section">
+      <p id="midi_results" class="setup-label">
+        Wähle hier den passenden MIDI-Anschluss.
+      </p>
+
+      <p id="midi_results_proposal"
+        class="setup-proposal"
+        style="display:none;">
+      </p>
+      
+      <select name="select_midi"
+              id="select_midi"
+              class="setup-select">
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="button button-green">
+        Einstellungen Speichern und Fortfahren
+      </button>
+    </div>
+
+  </form>
+
 
     <script>
         getSystestResults();
     </script>
-
-    <div class="button-group">
-      <button class="button button-green" onclick="location.href='/dashboard'"><i class="fa-solid fa-circle-play"></i>&nbsp;Start</button>
-    </div>
-    <div class="button-group">
-      <button class="button button-green" onclick=""><i class="fa-solid fa-file-pdf"></i> &nbsp; Anleitung</button>
-      <button class="button button-green" onclick="location.href='/settings'"><i class="fa-solid fa-sliders"></i>&nbsp; Einstellungen</button>
-    </div>
 
   </div>
 

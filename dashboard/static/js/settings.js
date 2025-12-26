@@ -83,36 +83,59 @@ function copyDefaultValue(name){
 }
 
 /**
+ * Helper function to create selector options
+ * @param {*} data The data to create options from (List)
+ * @param {*} type COM or MIDI
+ * @param {*} selector The select element to use
+ * @param {*} proposal_text The proposal text element to use
+ * 
+ */
+async function createSelectorOptions(data, type, selector, proposal_text){
+    data.forEach(port => {
+        console.log(port);
+
+        const option = document.createElement("option");
+        option.value = port.device;
+
+        let name, candidate = false;
+        if (type === "COM"){
+            name = port.device + " - " + port.description;
+            candidate = port.runnable === true;
+        } else if (type === "MIDI"){
+            name = port.interface + " - " + port.name;
+            candidate = port.candidate === true;
+        } else {
+            name = JSON.stringify(port);
+        }
+
+        if (candidate) {
+            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
+            option.selected = (type === "COM") ? true : (port.index === 0);
+            proposal_text.innerHTML += "<b>" + name + "</b><br>";
+        } else {
+            option.textContent = name;
+        }
+
+        selector.appendChild(option);
+    });
+}
+
+/**
  * Fetches and displays the system test results
  */
 async function getSystestResults(){
     const systest = await fetch_json("http://localhost:8000/systest");
     const textbox = document.querySelector("#systest_results");
     const textbox_proposal = document.querySelector("#systest_results_proposal");
+    const midi_textbox_proposal = document.querySelector("#midi_results_proposal");
     const loader = document.querySelector("#systest_loading");
 
     const form = document.querySelector("#setup_form");
     const select_port = document.querySelector("#select_port");
     const select_midi = document.querySelector("#select_midi");
 
-    systest.COM.forEach(port => {
-        console.log(port);
-
-        const option = document.createElement("option");
-        option.value = port.device;
-
-        let name = port.device + " - " + port.description;
-
-        if (port.runnable === true) {
-            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
-            option.selected = true;
-            textbox_proposal.innerHTML += "<b>\u{2B50} " + name + " \u{2B50}</b>";
-        } else {
-            option.textContent = name;
-        }
-
-        select_port.appendChild(option);
-    });
+    createSelectorOptions(systest.COM, "COM", select_port, textbox_proposal);
+    createSelectorOptions(systest.MIDI, "MIDI", select_midi, midi_textbox_proposal);
 
     textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist. Unser Systemtest empfiehlt diesen Anschluss: ";
     if (textbox_proposal.innerHTML === ""){
@@ -122,27 +145,10 @@ async function getSystestResults(){
     }
 
     textbox_proposal.style.display = "block";
+    midi_textbox_proposal.style.display = "block";
     form.style.display = "block";
     loader.style.display = "none";
 
-    const midi_textbox_proposal = document.querySelector("#midi_results_proposal");
-    systest.MIDI.forEach(port => {
-        const option = document.createElement("option");
-        option.value = port.device;
-
-        let name = port.interface + " - " + port.name;
-       
-        if (port.candidate === true) {
-            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
-
-            option.selected = port.index === 0;
-            midi_textbox_proposal.innerHTML += "<b>\u{2B50} " + name + " \u{2B50}</b><br>";
-        } else {
-            option.textContent = "\u{26A0}\u{FE0F}" + name + "\u{26A0}\u{FE0F}";
-        }
-        
-        select_midi.appendChild(option);
-    });
 }
 
 /**
