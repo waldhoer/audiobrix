@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/styles/style.css">
   <script src="/static/js/dashboard.js"></script>
   <script src="/static/js/settings.js"></script>
+  <script src="/static/js/setup.js"></script>
   <script src="/static/fontawesome/js/all.min.js"></script>
 </head>
 
@@ -49,7 +50,7 @@
       <div class="setup-section">
         <p id="midi_results" class="setup-label">
           Wähle hier den passenden MIDI-Anschluss. In der Regel funktioniert der Microsoft MIDI Mapper (0). 
-          Sollte 0 oder 1 nicht funktionieren, installiere bitte <a href="https://coolsoft.altervista.org/en/virtualmidisynth">VirtualMIDISynth</a>
+          Sollte 0 oder 1 nicht funktionieren, installiere bitte <a target="_blank" href="https://coolsoft.altervista.org/en/virtualmidisynth">VirtualMIDISynth</a>.
         </p>
 
         <p id="midi_results_proposal"
@@ -64,10 +65,15 @@
       </div>
 
       <br>
+      <div class="setup-divider"></div>
+      <br>
+
+      <p class="setup-label"> Du kannst diese Einstellungen jederzeit ändern, sollte etwas nicht funktionieren.</p>
+
     </form>
     </div>
 
-  <div class="button-group" id="save_button" style="display:none;">
+  <div class="button-group" id="save_button" style="display:none; margin-top: 6px;">
     <button class="button button-green" onclick="saveSetup()">
       Einstellungen Speichern und Fortfahren
     </button>
