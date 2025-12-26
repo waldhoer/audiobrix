@@ -87,16 +87,35 @@ function copyDefaultValue(name){
  */
 async function getSystestResults(){
     const systest = await fetch_json("http://localhost:8000/systest");
-    let textbox = document.querySelector("#systest_results");
+    const textbox = document.querySelector("#systest_results");
+    const textbox_proposal = document.querySelector("#systest_results_proposal");
+    const loader = document.querySelector("#systest_loading");
 
+    const form = document.querySelector("#setup_form");
+    const select = document.querySelector("#select_port");
+    
     systest.COM.forEach(port => {
         console.log(port);
-        if (port.candidate === true){
-            textbox.innerHTML += "<b>" + port.device + " - " + port.description + " - " + port.hwid + " - " + port.runnable +  "</b><br><br>";
+
+        const option = document.createElement("option");
+        option.value = port.device;
+
+        let name = port.device + " - " + port.description;
+
+        if (port.candidate === true) {
+            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
+            option.selected = true;
+            textbox_proposal.innerHTML += "<b>\u{2B50} " + name + " \u{2B50}</b>";
         } else {
-            textbox.innerHTML += port.device + " - " + port.description + " - " + port.hwid + " - " + port.runnable + "<br><br>";
+            option.textContent = name;
         }
+
+        select.appendChild(option);
     });
+    textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist. Unser Systemtest empfiehlt diesen Anschluss: ";
+    textbox_proposal.style.display = "block";
+    form.style.display = "block";
+    loader.style.display = "none";
 }
 
 /**

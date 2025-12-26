@@ -16,7 +16,18 @@
     <h1 style="padding-bottom: 10px;">AUDIOBRIX EINRICHTUNG</h1>
     <img src="/static/images/icon_setup.png" alt="Audiobrix Logo" width="300"/>
 
-    <p id="systest_results"></p>
+    <img src="/static/images/loader.gif" alt="Loading" width="300px" id="systest_loading"/>
+
+    <p id="systest_results">Vorhandene Ports werden gescanned...</p>
+    <p id="systest_results_proposal" style="color:green; display: hidden;"></p>
+
+    <form id="setup_form" style="display: none;">
+      <select name="select_port" id="select_port">
+      </select>
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
+
     <script>
         getSystestResults();
     </script>
