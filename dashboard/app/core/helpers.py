@@ -1,11 +1,10 @@
 import logging, re
 from pathlib import Path
-import json, subprocess, sys
+import json, sys
 import time
 from pygame import midi
 import serial.tools.list_ports
 from app.core.events import Event
-from app.core.exceptions import AudiobrixUsbError
 
 
 def base_path() -> Path:
@@ -91,6 +90,36 @@ class Helpers:
         return False
 
     @staticmethod
+    def test_midi_port(device_id: int) -> bool:
+        """
+        Tests if the midi port is valid and reasonable.
+        It does NOT check if the device is actually capable of being opened because this breaks windows :)))
+        @return: True if the midi port seems valid, false otherwise
+        """
+        Event.info.send(
+            "Miditest_Connection_Test",
+            service="systest",
+            message="Probing " + str(device_id),
+        )
+        midi.init()
+
+        try:
+            device_id = int(device_id)
+        except (ValueError, TypeError):
+            return False
+
+        if device_id < 0 or device_id >= midi.get_count():
+            return False
+
+        info = midi.get_device_info(device_id)
+        if info is None:
+            return False
+
+        if info[3] != 1:  # 3 index indicates MIDI output
+            return False
+        return True
+
+    @staticmethod
     def list_serial_ports() -> list:
         """
         Lists all available COMs on Windows.
@@ -151,7 +180,12 @@ class Helpers:
         for i in range(midi.get_count()):
             info = midi.get_device_info(i)
             devices.append(
-                str(i) + ": " + info[0].decode("utf-8") + "-" + info[1].decode("utf-8")
+                {
+                    "index": i,
+                    "interface": info[0].decode("utf-8"),
+                    "name": info[1].decode("utf-8"),
+                    "candidate": Helpers.test_midi_port(i),
+                }
             )
         return devices
 

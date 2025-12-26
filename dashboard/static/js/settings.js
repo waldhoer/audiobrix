@@ -92,8 +92,9 @@ async function getSystestResults(){
     const loader = document.querySelector("#systest_loading");
 
     const form = document.querySelector("#setup_form");
-    const select = document.querySelector("#select_port");
-    
+    const select_port = document.querySelector("#select_port");
+    const select_midi = document.querySelector("#select_midi");
+
     systest.COM.forEach(port => {
         console.log(port);
 
@@ -102,7 +103,7 @@ async function getSystestResults(){
 
         let name = port.device + " - " + port.description;
 
-        if (port.candidate === true) {
+        if (port.runnable === true) {
             option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
             option.selected = true;
             textbox_proposal.innerHTML += "<b>\u{2B50} " + name + " \u{2B50}</b>";
@@ -110,12 +111,38 @@ async function getSystestResults(){
             option.textContent = name;
         }
 
-        select.appendChild(option);
+        select_port.appendChild(option);
     });
+
     textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist. Unser Systemtest empfiehlt diesen Anschluss: ";
+    if (textbox_proposal.innerHTML === ""){
+        textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist.";
+        textbox_proposal.innerHTML = "<b>\u{26A0}\u{FE0F} Es wurde kein passender Anschluss gefunden.<br>Manuelles Testen notwendig!</b>";
+        textbox_proposal.style.color = "red";
+    }
+
     textbox_proposal.style.display = "block";
     form.style.display = "block";
     loader.style.display = "none";
+
+    const midi_textbox_proposal = document.querySelector("#midi_results_proposal");
+    systest.MIDI.forEach(port => {
+        const option = document.createElement("option");
+        option.value = port.device;
+
+        let name = port.interface + " - " + port.name;
+       
+        if (port.candidate === true) {
+            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
+
+            option.selected = port.index === 0;
+            midi_textbox_proposal.innerHTML += "<b>\u{2B50} " + name + " \u{2B50}</b><br>";
+        } else {
+            option.textContent = "\u{26A0}\u{FE0F}" + name + "\u{26A0}\u{FE0F}";
+        }
+        
+        select_midi.appendChild(option);
+    });
 }
 
 /**
