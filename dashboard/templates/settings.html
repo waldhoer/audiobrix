@@ -22,29 +22,38 @@
       Klicke auf "Systemtest durchführen", um Details zu Arduino Port und MIDI zu bekommen.
     </p>
 
-    <button class="button button-green" onclick="appendSystestResultsToTable()" style="width: 450px; margin-bottom: 28px;">
-      <i class="fa-solid fa-rotate-right"></i>&nbsp; Systemtest durchführen und Empfehlungen anzeigen
-    </button>
-
-    <table style="width:100%;" id="settingsTable">
-        <thead>
-            <tr>
-                <th style="width:20%">Einstellung</th>
-                <th style="width:50%" class="setting-row-mid">Beschreibung</th>
-                <th style="width:20%" class="setting-row-mid">Standard</th>
-                <th style="width:20%">Wert</th>
-            </tr>
-        </thead>
-        <tbody id="settingsTableBody">
-            <script> loadTableSettings(); </script>
-        </tbody>
-    </table>
-    <div class="button-group" style="padding-top: 20px;">
-      <button class="button button-green" onclick="location.href='/'">Änderungen Verwerfen und zum zum Start</button>
-      <button class="button button-green" onclick="location.href='/dashboard'">Änderungen Verwerfen und zum Dashboard</button>
-      <button class="button button-green-active" onclick="saveTableSettings()">Einstellungen Speichern und weiter zum Dashboard</button>
+    <div class="setup-container" id="loader">
+      <div id="systest_loading">
+        <img src="/static/images/loader.gif" alt="Loading" width="300px" id="systest_loading"/>
+        <p>Einstellungen werden geladen...</p>
+      </div>
     </div>
 
+    <div id="settingsContent" style="display:none;">
+      <button class="button button-green" onclick="appendSystestResultsToTable()" style="width: 450px; margin-bottom: 28px;">
+        <i class="fa-solid fa-rotate-right"></i>&nbsp; Systemtest durchführen und Empfehlungen anzeigen
+      </button>
+
+      <table style="width:100%;" id="settingsTable">
+          <thead>
+              <tr>
+                  <th style="width:20%">Einstellung</th>
+                  <th style="width:50%" class="setting-row-mid">Beschreibung</th>
+                  <th style="width:20%" class="setting-row-mid">Standard</th>
+                  <th style="width:20%">Wert</th>
+              </tr>
+          </thead>
+          <tbody id="settingsTableBody">
+              <script> loadTableSettings(); </script>
+          </tbody>
+      </table>
+      <div class="button-group" style="padding-top: 20px;">
+        <button class="button button-green" onclick="location.href='/'">Änderungen Verwerfen und zum zum Start</button>
+        <button class="button button-green" onclick="location.href='/dashboard'">Änderungen Verwerfen und zum Dashboard</button>
+        <button class="button button-green-active" onclick="saveTableSettings()">Einstellungen Speichern und weiter zum Dashboard</button>
+      </div>
+    </div>
+  
   </div>
 
   <div class="floating-notification-vertical" id="notificationContainer"></div>

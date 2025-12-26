@@ -205,10 +205,13 @@ async function appendSystestResultsToTable() {
 /**
  * Loads the current table settings and draws the (converted) values into the table
  */
-async function loadTableSettings() {
+async function loadTableSettings() {    
     const tbody = document.getElementById("settingsTableBody");
     descriptions = await readSettingsDescriptions();
     settings = await readSettings();
+
+    document.getElementById("settingsContent").style.display = "block";
+    document.getElementById("loader").style.display = "none";
 
     console.log("Loaded settings:", settings);
 
