@@ -190,22 +190,46 @@ class Helpers:
         return devices
 
     @staticmethod
-    def setup_logging():
+    def setup_logging() -> None:
         """
-        Sets up basic logging (to file and console). To be called on startup once.
+        Sets up the logging (to file and console). To be called on startup once.
+        Events are captured and later broadcasted to the frontend.
+        Other logs from the FastAPI are logged in file, but not broadcasted.
         """
         log_dir = base_path() / "logs"
         log_dir.mkdir(exist_ok=True)
         log_file = log_dir / "events.log"
 
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-            handlers=[
-                logging.FileHandler(log_file, encoding="utf-8"),
-                logging.StreamHandler(),  # added for console output
-            ],
-        )
+        formatter = logging.Formatter("%(asctime)s [%(levelname)s] : %(message)s")
+
+        # General logger defaults:
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.INFO)
+
+        # Console logger handler (Capture console logs):
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+        console_handler.setLevel(logging.INFO)
+
+        # Root logger (Events and Application logs):
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.INFO)
+
+        if not root_logger.handlers:
+            root_logger.addHandler(file_handler)
+            root_logger.addHandler(console_handler)
+
+        # Attach FastAPI loggers:
+        fastapi_loggers = ("uvicorn", "uvicorn.error", "uvicorn.access", "fastapi")
+        for logger_name in fastapi_loggers:
+            logger = logging.getLogger(logger_name)
+            logger.setLevel(logging.INFO)
+            logger.propagate = False  # avoid double logging
+
+            if not logger.handlers:
+                logger.addHandler(file_handler)
+                logger.addHandler(console_handler)
 
     descriptions = None
 
