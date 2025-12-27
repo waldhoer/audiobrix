@@ -16,152 +16,156 @@
 <body>
   <h1 style="margin:0; margin-top: 16px;">AUDIOBRIX DASHBOARD</h1>
   <p style="margin:0; margin-bottom: 16px;">Alpha Version © <a href="https://waldhoer.org" target=blank>Merlin Waldhör</a> 2025</p>
-  <div class="dashboard">
-    <div class="grid-wrapper">
-      <div class="grid-container">
-        <table class="grid" id="grid">
-          <thead id="grid-head"></thead>
-          <tbody id="grid-body"></tbody>
-        </table>
+  
+  <div class="dashboard-scale">
+    <div class="dashboard">
+      <div class="grid-wrapper">
+        <div class="grid-container">
+          <table class="grid" id="grid">
+            <thead id="grid-head"></thead>
+            <tbody id="grid-body"></tbody>
+          </table>
 
-        <script>
-            /*
-            We do not draw the table using document.write because the settings reading
-            requires a delay -> Instead we use the DOM method!
-            */
-            async function generate_table() {
-              const settings = await readSettings();
+          <script>
+              /*
+              We do not draw the table using document.write because the settings reading
+              requires a delay -> Instead we use the DOM method!
+              */
+              async function generate_table() {
+                const settings = await readSettings();
 
-              const midiKeys = Object.keys(midi_names).map(Number);
+                const midiKeys = Object.keys(midi_names).map(Number);
 
-              // Header
-              const tbody = document.getElementById('grid-body');
-              const thead = document.getElementById('grid-head');
-              tbody.innerHTML = '';
-              thead.innerHTML = '';
+                // Header
+                const tbody = document.getElementById('grid-body');
+                const thead = document.getElementById('grid-head');
+                tbody.innerHTML = '';
+                thead.innerHTML = '';
 
-              const theadRow = document.createElement('tr');
-              const emptyTh = document.createElement('th'); 
-              theadRow.appendChild(emptyTh);
-
-              for (let b = 0; b < settings["note_amount"]; b++) {
-                const th = document.createElement('th');
-                th.textContent = b + 1;
-                theadRow.appendChild(th);
-              }
-
-              thead.appendChild(theadRow);
-
-              // Table Cells
-              for (let m = settings["max_note_height"]-1; m >= 0; m--) {
-                const midi_note = Object.keys(midi_names)[m];
-
-                const tr = document.createElement('tr');
-                const labelCell = document.createElement('td');
-                labelCell.className = 'rowlabel';
-                labelCell.textContent = midiToName(midi_note);
-                tr.appendChild(labelCell);
+                const theadRow = document.createElement('tr');
+                const emptyTh = document.createElement('th'); 
+                theadRow.appendChild(emptyTh);
 
                 for (let b = 0; b < settings["note_amount"]; b++) {
-                  const td = document.createElement('td');
-                  const div = document.createElement('div');
-                  div.className = 'cell';
-                  div.dataset.rowNote = midi_note;
-                  div.dataset.beat = b;
-                  td.appendChild(div);
-                  tr.appendChild(td);
+                  const th = document.createElement('th');
+                  th.textContent = b + 1;
+                  theadRow.appendChild(th);
                 }
 
-                tbody.appendChild(tr);
+                thead.appendChild(theadRow);
+
+                // Table Cells
+                for (let m = settings["max_note_height"]-1; m >= 0; m--) {
+                  const midi_note = Object.keys(midi_names)[m];
+
+                  const tr = document.createElement('tr');
+                  const labelCell = document.createElement('td');
+                  labelCell.className = 'rowlabel';
+                  labelCell.textContent = midiToName(midi_note);
+                  tr.appendChild(labelCell);
+
+                  for (let b = 0; b < settings["note_amount"]; b++) {
+                    const td = document.createElement('td');
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    div.dataset.rowNote = midi_note;
+                    div.dataset.beat = b;
+                    td.appendChild(div);
+                    tr.appendChild(td);
+                  }
+
+                  tbody.appendChild(tr);
+                }
+
+                if (settings["show_tutorial"]){
+                  settings["show_tutorial"] = false;
+                  await writeSettings(settings);
+
+                  introJs().setOptions({
+                    steps: [
+                      { element: '#grid', intro: 'Hier werden die erkannten Blöcke angezeigt. Durch klicken auf die einzelnen Blöcke können Noten stummgeschaltet werden.' },
+                      { element: '#dmiButton', intro: 'Hier wird die Notenblockerkennung gestartet und gestoppt. Damit werden die erkannten Blöcke angezeigt.' },
+                      { element: '#seqButton', intro: 'Hier wird der Sequencer gestartet und gestoppt. Damit werden die Noten abgespielt und hörbar gemacht.' },
+                      { element: '#instrument_btn', intro: 'Hier kann zwischen unterschiedlichen Instrumenten gewählt werden.' },
+                      { element: '#speed_slider', intro: 'Hier kann die Geschwindigkeit von links (langsam) nach rechts (schnell) eingestellt werden.' },
+                      { element: '#settings_btn', intro: 'In den Einstellungen können wichtige Parameter festgelegt werden.' },
+                      { element: '#toggleDetailsButton', intro: 'Hier kann die detaillierte Ansicht ein- oder ausgeblendet werden.' }
+                    ],
+                    showBullets: false,
+                    showProgress: true,
+                    nextLabel: 'Weiter',
+                    prevLabel: 'Zurück',
+                    doneLabel: 'Fertig 🎉'
+                  }).start();
+
+                }
               }
 
-              if (settings["show_tutorial"]){
-                settings["show_tutorial"] = false;
-                await writeSettings(settings);
+              generate_table();
+            </script>
+          </div>
 
-                introJs().setOptions({
-                  steps: [
-                    { element: '#grid', intro: 'Hier werden die erkannten Blöcke angezeigt. Durch klicken auf die einzelnen Blöcke können Noten stummgeschaltet werden.' },
-                    { element: '#dmiButton', intro: 'Hier wird die Notenblockerkennung gestartet und gestoppt. Damit werden die erkannten Blöcke angezeigt.' },
-                    { element: '#seqButton', intro: 'Hier wird der Sequencer gestartet und gestoppt. Damit werden die Noten abgespielt und hörbar gemacht.' },
-                    { element: '#instrument_btn', intro: 'Hier kann zwischen unterschiedlichen Instrumenten gewählt werden.' },
-                    { element: '#speed_slider', intro: 'Hier kann die Geschwindigkeit von links (langsam) nach rechts (schnell) eingestellt werden.' },
-                    { element: '#settings_btn', intro: 'In den Einstellungen können wichtige Parameter festgelegt werden.' },
-                    { element: '#toggleDetailsButton', intro: 'Hier kann die detaillierte Ansicht ein- oder ausgeblendet werden.' }
-                  ],
-                  showBullets: false,
-                  showProgress: true,
-                  nextLabel: 'Weiter',
-                  prevLabel: 'Zurück',
-                  doneLabel: 'Fertig 🎉'
-                }).start();
+          <div id="output"></div>
 
-              }
-            }
+          <div class="button-group" style="padding-bottom: 0px;">
+            <button id="dmiButton" class="button button-green" onclick="toggleDMI()">▶️ Blockerkennung starten</button>
+            <button id="seqButton" class="button button-green" onclick="toggleSequencer()">🔁 Sequencer starten</button>
+          </div>
+          
+          <div class="log-container" id="logContainer" style="display: none;">
+            <pre id="log"></pre>
+            <p id="dmi_state" class="log">Blockerkennung: ?</p>
+            <p id="seq_state" class="log">Sequencer: ?</p>
+            <p id="pattern_log" class="log">Erkanntes Notenblatt: ?</p>
+            <p id="step_log" class="log">Gespielte Noten: ?</p>
+          </div>
 
-            generate_table();
-          </script>
-        </div>
-
-        <div id="output"></div>
-
-        <div class="button-group" style="padding-bottom: 0px;">
-          <button id="dmiButton" class="button button-green" onclick="toggleDMI()">▶️ Blockerkennung starten</button>
-          <button id="seqButton" class="button button-green" onclick="toggleSequencer()">🔁 Sequencer starten</button>
         </div>
         
-        <div class="log-container" id="logContainer" style="display: none;">
-          <pre id="log"></pre>
-          <p id="dmi_state" class="log">Blockerkennung: ?</p>
-          <p id="seq_state" class="log">Sequencer: ?</p>
-          <p id="pattern_log" class="log">Erkanntes Notenblatt: ?</p>
-          <p id="step_log" class="log">Gespielte Noten: ?</p>
+        <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
+          <script>
+            setInstrumentButton();
+          </script>
+          <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier" style="padding:0">
+            <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
+          </button>
+          <button class="button" id="toggleInstrument10" onclick="setInstrument(10)" title="Xylophon" style="padding:0">
+            <p><img width="24" height="24" src="https://img.icons8.com/android/24/xylophone.png" alt="xylophone"/></p>
+          </button>
+          <button class="button" id="toggleInstrument51" onclick="setInstrument(51)" title="Streicher" style="padding:0">
+            <p><img width="24" height="24" src="https://img.icons8.com/android/24/violin.png" alt="violin"/></p>
+          </button>
+          <button class="button" id="toggleInstrument56" onclick="setInstrument(56)" title="Trompete" style="padding:0">
+            <p><img width="24" height="24" src="https://img.icons8.com/android/24/trumpet.png" alt="trumpet"/></p>
+          </button>
+          <button class="button" id="toggleInstrument24" onclick="setInstrument(24)" title="Gitarre" style="padding:0">
+            <p><img width="24" height="24" src="https://img.icons8.com/android/24/guitar.png" alt="guitar"/></p>
+          </button>
         </div>
+        
+        <div class="slidecontainer" id="speed_slider">
+          <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
+        </div>
+        <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
+        <script>updateSpeed(true);</script>
 
-      </div>
-      
-      <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
-        <script>
-          setInstrumentButton();
-        </script>
-        <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier">
-          <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
-        </button>
-        <button class="button" id="toggleInstrument10" onclick="setInstrument(10)" title="Xylophon">
-          <p><img width="24" height="24" src="https://img.icons8.com/android/24/xylophone.png" alt="xylophone"/></p>
-        </button>
-        <button class="button" id="toggleInstrument51" onclick="setInstrument(51)" title="Streicher">
-          <p><img width="24" height="24" src="https://img.icons8.com/android/24/violin.png" alt="violin"/></p>
-        </button>
-        <button class="button" id="toggleInstrument56" onclick="setInstrument(56)" title="Trompete">
-          <p><img width="24" height="24" src="https://img.icons8.com/android/24/trumpet.png" alt="trumpet"/></p>
-        </button>
-        <button class="button" id="toggleInstrument24" onclick="setInstrument(24)" title="Gitarre">
-          <p><img width="24" height="24" src="https://img.icons8.com/android/24/guitar.png" alt="guitar"/></p>
-        </button>
-      </div>
-      
-      <div class="slidecontainer" id="speed_slider">
-        <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
-      </div>
-      <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
-      <script>updateSpeed(true);</script>
+        <script src="/static/js/update_table.js"></script>
+        <script src="/static/js/event_handler.js"></script>
+    </div>
 
-      <script src="/static/js/update_table.js"></script>
-      <script src="/static/js/event_handler.js"></script>
+    <div class="floating-menu-vertical">
+      <button class="button" onclick="location.href='https://dev.waldhoer.org/audiobrix'">
+        <p><i class="fa-solid fa-globe"></i> &nbsp; AudioBrix Website</p>
+      </button>
+      <button class="button" id="settings_btn" onclick="location.href='/settings'">
+        <p><i class="fa-solid fa-sliders"></i> &nbsp; Einstellungen</p>
+      </button>
+      <button class="button" id="toggleDetailsButton" onclick="toggleDetails()">
+        <p><i class="fa-solid fa-code"></i> &nbsp; Details Anzeigen</p>
+      </button>
+    </div>
   </div>
-
-  <div class="floating-menu-vertical">
-    <button class="button" onclick="location.href='https://dev.waldhoer.org/audiobrix'">
-      <p><i class="fa-solid fa-globe"></i> &nbsp; AudioBrix Website</p>
-    </button>
-    <button class="button" id="settings_btn" onclick="location.href='/settings'">
-      <p><i class="fa-solid fa-sliders"></i> &nbsp; Einstellungen</p>
-    </button>
-    <button class="button" id="toggleDetailsButton" onclick="toggleDetails()">
-      <p><i class="fa-solid fa-code"></i> &nbsp; Details Anzeigen</p>
-    </button>
-  </div>
+  
 
 <div class="floating-notification-vertical" id="notificationContainer"></div>
   <a href="https://univie.ac.at">
