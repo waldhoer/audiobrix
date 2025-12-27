@@ -38,6 +38,9 @@ class Helpers:
         """
         Overwrite the entire config with a new one and save it to file.
         """
+        if len(new_config) == 0:
+            raise AttributeError("Empty dict provided for settings write")
+
         cls.config = new_config
         with open(cls.config_path, "w") as config_file:
             json.dump(cls.config, config_file, indent=4)
