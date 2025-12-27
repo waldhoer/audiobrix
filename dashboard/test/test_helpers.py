@@ -13,17 +13,18 @@ class HelperTester(unittest.TestCase):
         """
         Tests if empty settings can be stored
         """
-        with self.assertRaises(AttributeError):
-            settings = Helpers.config
+        settings = Helpers.config
 
+        with self.assertRaises(AttributeError):
             Helpers.writeAll(dict())
 
-            with open(self.config_path, "r", encoding="utf-8") as config_file:
-                new_settings = json.load(config_file)
-                Helpers.writeAll(settings)
+        with self.assertRaises(AttributeError):
+            Helpers.write("arduino_port", None)
 
-                print("Test:", new_settings)
-                assert new_settings != {}
+        with self.assertRaises(AttributeError):
+            Helpers.write("", "Test")
+
+        Helpers.writeAll(settings)
 
 
 if __name__ == "__main__":

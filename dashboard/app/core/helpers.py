@@ -29,6 +29,11 @@ class Helpers:
         """
         Update a key in the config and save it to file.
         """
+        if not key or len(key) == 0 or not value:
+            raise AttributeError(
+                "Invalid or empty parameters provided for single settings write"
+            )
+
         cls.config[key] = value
         with open(cls.config_path, "w") as config_file:
             json.dump(cls.config, config_file, indent=4)
