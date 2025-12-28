@@ -18,6 +18,8 @@ from app.core.event_bridge import EventBridge
 from app.service.DMI import DMI
 
 BASE_DIR = Path(__file__).resolve().parent
+
+Helpers.load_settings()
 config = Helpers.config
 
 ws_manager = WebSocketManager()
