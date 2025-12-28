@@ -24,6 +24,12 @@ def resource_path(relative_path: str) -> Path:
 
 class Helpers:
 
+    descriptions = {}
+    config = {}
+
+    config_path = resource_path("settings.json")
+    config_description_path = resource_path("settings_dscr.json")
+
     @classmethod
     def write(cls, key: str, value):
         """
@@ -239,13 +245,40 @@ class Helpers:
                 logger.addHandler(file_handler)
                 logger.addHandler(console_handler)
 
-    descriptions = None
+    @classmethod
+    def load_settings(cls) -> None:
+        """
+        Loads the settings and checks if they are empty or rather complete.
 
-    path = Path(__file__).resolve()
-    config_path = resource_path("settings.json")
-    config_description_path = resource_path("settings_dscr.json")
+        :param cls: Class variable
+        """
 
-    with open(config_path, "r", encoding="utf-8") as config_file:
-        config = json.load(config_file)
-    with open(config_description_path, "r", encoding="utf-8") as description_file:
-        descriptions = json.load(description_file)
+        # Check if descriptions are empty
+        with open(
+            cls.config_description_path, "r", encoding="utf-8"
+        ) as description_file:
+            descriptions = json.load(description_file)
+            if len(descriptions) == 0:
+                msg = KeyError(f"Settings Descriptions are empty. Exiting.")
+                Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                raise msg
+            cls.descriptions = descriptions
+
+        # Check if settings are empty and each description has a setting variable
+        with open(cls.config_path, "r", encoding="utf-8") as config_file:
+            config = json.load(config_file)
+
+            if len(config) == 0:
+                msg = KeyError(f"Settings are empty. Exiting.")
+                Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                raise msg
+
+            for key in config.keys():
+                if not key in cls.descriptions and key != "skip":
+                    msg = KeyError(
+                        f"Expected setting variable {key} not found. Exiting."
+                    )
+                    Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                    raise msg
+
+            cls.config = config
