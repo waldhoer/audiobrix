@@ -5,6 +5,9 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from pythonosc import udp_client
 from app.core.helpers import Helpers
+
+Helpers.load_settings()
+
 from app.service.osc_manager import OscManager
 from app.service.web_socket_manager import WebSocketManager
 from app.api import (
@@ -19,7 +22,6 @@ from app.service.DMI import DMI
 
 BASE_DIR = Path(__file__).resolve().parent
 
-Helpers.load_settings()
 config = Helpers.config
 
 ws_manager = WebSocketManager()
