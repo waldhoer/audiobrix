@@ -9,9 +9,9 @@ class _Events:
     def __init__(self):
         self.active = signal("active")
         self.inactive = signal("inactive")
-        self.error = signal("audbrx_error")
-        self.warning = signal("audbrx_warning")
-        self.info = signal("audbrx_info")
+        self.error = signal("error")
+        self.warning = signal("warning")
+        self.info = signal("info")
 
         self.disconnected = signal("disconnected")
 
