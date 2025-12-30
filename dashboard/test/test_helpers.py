@@ -9,7 +9,7 @@ class HelperTester(unittest.TestCase):
     config_path = resource_path("settings.json")
     config_description_path = resource_path("settings_dscr.json")
 
-    def testEmptyWrite(self):
+    def test_EmptyWrite(self):
         """
         Tests if empty settings can be stored
         """
