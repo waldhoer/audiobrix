@@ -50,8 +50,9 @@ class OscManager:
         """
         Receives and processes the midi notes from the DMI as JSON.
         The processed message is broadcasted to the websocket manager.
-        @param address: The OSC address
-        @param args: Incoming message(s)
+
+        :param address: The OSC address
+        :param args: Incoming message(s)
         """
         parsed = None
 

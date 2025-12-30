@@ -16,8 +16,9 @@ class Sequencer:
     ):
         """
         Initializes a new Sequencer.
-        @param dashboard_client: The dashboard client used to sent the current notes (for visualisation)
-        @bpm: The beats per minute playing speed
+
+        :param dashboard_client: The dashboard client used to sent the current notes (for visualisation)
+        :param bpm: The beats per minute playing speed
         """
         self.beats_pattern = [[] for _ in range(8)]
         self.thread = None
@@ -63,7 +64,8 @@ class Sequencer:
     def change_instrument(self, instrument: int):
         """
         Changes the instrument of the sequencer while playing
-        @param instrument: The GM number of the new instrument
+
+        :param instrument: The GM number of the new instrument
         """
         self.instrument = instrument
         if self.midi_player:
@@ -124,7 +126,8 @@ class Sequencer:
     def change_speed(self, bpm: int):
         """
         Changes the playing speed of the sequencer.
-        @param bpm: The new beats per minute speed
+
+        :param bpm: The new beats per minute speed
         """
         if bpm < 20 or bpm > 300:
             Event.error.send(
