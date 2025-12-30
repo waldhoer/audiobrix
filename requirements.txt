@@ -7,3 +7,4 @@ jinja2
 python-osc
 blinker
 pyserial
+coverage
