@@ -8,7 +8,7 @@ from app.core.events import Event
 
 
 def base_path() -> Path:
-    """Return the base path depending on whether we're running from source or PyInstaller."""
+    """Returns the base path depending on whether we're running from source or PyInstaller."""
     if getattr(sys, "frozen", False):
         # Running from PyInstaller
         return Path(sys.executable).parent
@@ -18,7 +18,7 @@ def base_path() -> Path:
 
 
 def resource_path(relative_path: str) -> Path:
-    """Get absolute path to a resource inside or outside the bundle."""
+    """Gets absolute path to a resource inside or outside the bundle."""
     return base_path() / relative_path
 
 
@@ -34,6 +34,10 @@ class Helpers:
     def write(cls, key: str, value):
         """
         Update a key in the config and save it to file.
+
+        :param cls: Class Variable
+        :param key: The new settings key
+        :param value: The new settings value
         """
         if not key or len(key) == 0 or not value:
             raise AttributeError(
@@ -48,6 +52,9 @@ class Helpers:
     def writeAll(cls, new_config: dict):
         """
         Overwrite the entire config with a new one and save it to file.
+
+        :param cls: Class Variable
+        :param new_config: The new settings dictionary with all settings fields
         """
         if len(new_config) == 0:
             raise AttributeError("Empty dict provided for settings write")
@@ -61,7 +68,9 @@ class Helpers:
         """
         Tests if an Arduino is reachable on the given port and the communication is working.
         This immitates the DMI JSON communication with the arduino and is rather strict!
-        @return: True if the connection was successful, false otherwise
+
+        :param port: The port string (e.g. "COM3")
+        :return: True if the connection was successful, false otherwise
         """
         decode_tolerance = 5
         Event.info.send(
@@ -108,7 +117,8 @@ class Helpers:
         """
         Tests if the midi port is valid and reasonable.
         It does NOT check if the device is actually capable of being opened because this breaks windows :)))
-        @return: True if the midi port seems valid, false otherwise
+
+        :return: True if the midi port seems valid, false otherwise
         """
         Event.info.send(
             "Miditest_Connection_Test",
@@ -138,7 +148,8 @@ class Helpers:
         """
         Lists all available COMs on Windows.
         Results can be used to identify which COM connection should be used for the arduino.
-        @return: List of available COM ports with details.
+
+        :return: List of available COM ports with details.
         """
         ports = list(serial.tools.list_ports.comports())
         result = []
