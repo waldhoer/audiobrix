@@ -1,0 +1,12 @@
+[run]
+source =
+    dashboard
+    main.py
+
+omit =
+    */templates/*
+    */static/*
+    */tests/*
+    */.venv/*
+    */venv/*
+    */__pycache__/*
