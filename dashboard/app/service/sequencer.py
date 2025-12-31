@@ -93,13 +93,7 @@ class Sequencer:
                 self.beats_pattern = [
                     [] for _ in range(Helpers.config["note_amount"])
                 ]  # empty patterns for edge case (DMI never started)
-            current_notes = self.beats_pattern[step]
-            played_notes = [
-                n
-                for n in current_notes
-                if "skip" in Helpers.config
-                and [str(step), str(n)] not in Helpers.config["skip"]
-            ]
+            played_notes = self.beats_pattern[step]
 
             message = {"type": "step", "step": step, "data": played_notes}
             self.dashboard_client.send_message(

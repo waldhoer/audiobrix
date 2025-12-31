@@ -25,9 +25,6 @@ async function readSettings() {
  * @param {*} settings The settings in JSON format
  */
 async function writeSettings(settings) {
-    if (!("skip" in settings)){
-        settings["skip"] = [];
-    }
     try {
         fetch('/config', {
             method: 'PUT',

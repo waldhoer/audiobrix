@@ -3,66 +3,8 @@
  */
 const ws = new WebSocket(`ws://${location.host}/ws`);
 
-let skippedNotes = []; // [["beat", "midi"]] like e.g. [["0","72"]]
-
 let settings;
 
-/**
- * Assigns the toggle/skip functionality to all cell buttons.
- */
-async function setupTableSkip() {
-    settings = await readSettings();
-    if (settings.skip) {
-        const skipList = settings.skip || [];
-
-        // Load note skips on page load
-        skipList.forEach(([beat, note]) => {
-            const cell = document.querySelector(`.cell[data-beat="${beat}"][data-row-note="${note}"]`);
-            if (cell) {
-                cell.classList.add("skipped");
-            }
-        });
-    }
-    
-    // Add note skip clickables
-    document.querySelectorAll(".cell").forEach(cell => {
-        cell.addEventListener("click", () => {
-            const beat = cell.dataset.beat;
-            const note = cell.dataset.rowNote;
-
-            const existingIndex = skippedNotes.findIndex(([b, n]) => b === beat && n === note);
-
-            if (existingIndex >= 0) {
-                skippedNotes.splice(existingIndex, 1);
-                cell.classList.remove("skipped");
-            } else {
-                skippedNotes.push([beat, note]);
-                cell.classList.add("skipped");
-            }
-
-            console.log("Skipped notes:", skippedNotes);
-            saveSkipState();
-        });
-    });
-    readSettings();
-}
-
-/**
- * Sends a request to save the currently skipped (frontend) notes  
- */
-function saveSkipState() {
-    try {
-        fetch('/skipped', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({skip : skippedNotes})
-        });
-    } catch (error) {
-        console.error("Error fetching file:", error);
-    }
-}
 
 /**
  * Draws the active (pressed) notes in the table
@@ -160,5 +102,3 @@ function drawCurrentNotes(msg){
         }   
     }
 }
-
-setupTableSkip();

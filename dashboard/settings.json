@@ -17,6 +17,5 @@
     "osc_remote_name": "/remote_osc",
     "osc_own_address": "127.0.0.1",
     "osc_own_port": 4562,
-    "osc_own_name": "/internal_osc",
-    "skip": []
+    "osc_own_name": "/internal_osc"
 }

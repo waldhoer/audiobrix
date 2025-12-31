@@ -36,15 +36,3 @@ async def stop(request: Request):
     if request.app.state.dmi is not None:
         request.app.state.dmi.stop()
         request.app.state.dmi = None
-
-
-@router.post("/skipped")
-async def skip(request: Request):
-    """
-    Endpoint for updating skipped notes.
-    """
-    data = await request.json()
-    if "skip" not in data:
-        Event.warning.send("API_Skip", service="DMI", message="Missing skip parameter.")
-
-    Helpers.write("skip", data["skip"])

@@ -505,12 +505,6 @@ input[type="checkbox"]:checked::after {
   box-shadow: inset 0 0 0 1px #d0d5dd;
 }
 
-.cell.skipped {
-  opacity: 0.3;
-  background-color: #da3e3e !important;
-  box-shadow: inset 0 0 0 1px #750000;
-}
-
 .setup-container {
   display: flex;
   flex-direction: column;

@@ -285,7 +285,7 @@ class Helpers:
                 raise msg
 
             for key in config.keys():
-                if not key in cls.descriptions and key != "skip":
+                if not key in cls.descriptions:
                     msg = KeyError(
                         f"Expected setting variable {key} not found. Exiting."
                     )
