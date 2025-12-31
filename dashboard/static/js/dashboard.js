@@ -179,11 +179,11 @@ function setSequencerButtonState(active) {
     if (active) {
         btn.classList.remove("button-green");
         btn.classList.add("button-red");
-        btn.textContent = "⏹️ Sequencer stoppen";
+        btn.textContent = "⏸️ Sequencer stoppen";
     } else {
         btn.classList.remove("button-red");
         btn.classList.add("button-green");
-        btn.textContent = "🔁 Sequencer starten";
+        btn.textContent = "▶️ Sequencer starten";
     }
 }
 
