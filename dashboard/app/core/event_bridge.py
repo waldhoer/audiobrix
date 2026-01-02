@@ -22,12 +22,13 @@ class EventBridge:
     def __init__(self, ws_manager):
         if getattr(self, "_initialized", False):
             return
+        self.logger = logging.getLogger("EventBridge")
+
         self.ws_manager = ws_manager
         self.loop = None
         self.pending_events = deque()
         self._connected_signals = set()
         self.connect_signals()
-        self.logger = logging.getLogger("EventBridge")
         print("[EventBridge] EventBridge initialized")
 
     def set_loop(self, loop: asyncio.AbstractEventLoop):
