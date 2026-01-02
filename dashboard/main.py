@@ -7,6 +7,7 @@ from pythonosc import udp_client
 from app.core.helpers import Helpers
 
 Helpers.load_settings()
+Helpers.setup_logging()
 
 from app.service.osc_manager import OscManager
 from app.service.web_socket_manager import WebSocketManager
@@ -29,8 +30,6 @@ event_bridge = EventBridge(ws_manager)
 dashboard = udp_client.SimpleUDPClient(
     config["osc_own_address"], config["osc_own_port"]
 )
-
-Helpers.setup_logging()
 
 
 @asynccontextmanager
