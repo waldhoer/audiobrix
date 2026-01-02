@@ -1,10 +1,18 @@
 /**
  * Handles the incoming messages (from the DMI) and updates the table
  */
-const ws = new WebSocket(`ws://${location.host}/ws`);
+ws = new WebSocket(`ws://${location.host}/ws`);
 
 let settings;
 
+/**
+ * Loads the settings
+ */
+async function initialize(){
+    settings = await readSettings();
+}
+
+initialize();
 
 /**
  * Draws the active (pressed) notes in the table
