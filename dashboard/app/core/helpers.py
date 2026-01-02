@@ -39,9 +39,9 @@ class Helpers:
         :param key: The new settings key
         :param value: The new settings value
         """
-        if not key or len(key) == 0 or not value:
+        if not key or len(key) == 0:
             raise AttributeError(
-                "Invalid or empty parameters provided for single settings write"
+                f"Invalid or empty parameters provided for single settings write: '{key}' with '{value}'"
             )
 
         cls.config[key] = value
