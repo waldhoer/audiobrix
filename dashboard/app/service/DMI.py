@@ -3,7 +3,6 @@ import serial, json, threading
 from termcolor import colored
 from pythonosc import udp_client
 from app.core.helpers import Helpers
-from app.core.exceptions import *
 from app.core.events import Event
 
 
@@ -37,7 +36,13 @@ class DMI:
             )
 
         except serial.SerialException as e:
-            Event.error.send(self, service=Event.DMI, message=str(AudiobrixUsbError(e)))
+            Event.send_tb(
+                Event.error,
+                e,
+                self,
+                Event.DMI,
+                "Arduino Setup failed.",
+            )
             return False
 
         return True
@@ -97,15 +102,23 @@ class DMI:
                     Event.active.send(self, service=Event.DMI)
             except serial.SerialException as e:
                 self.running = False
-                Event.disconnected.send(
-                    self, service=Event.DMI, message=str(AudiobrixUsbKilledError(e))
+                Event.send_tb(
+                    Event.disconnected,
+                    e,
+                    self,
+                    Event.DMI,
+                    "The Audiobrix USB device was disconnected from the USB port.",
                 )
                 break
 
             except AttributeError as e:
                 self.running = False
-                Event.error.send(
-                    self, service=Event.DMI, message=str(AudiobrixUsbError(e))
+                Event.send_tb(
+                    Event.error,
+                    e,
+                    self,
+                    Event.DMI,
+                    "Communication with Arduino failed.",
                 )
                 break
 
@@ -116,12 +129,12 @@ class DMI:
                 pressed = json.loads(raw)
             except json.decoder.JSONDecodeError as e:
                 if Helpers.config["verbose"]:
-                    Event.warning.send(
+                    Event.send_tb(
+                        Event.warning,
+                        e,
                         self,
-                        service=Event.DMI,
-                        message=str(
-                            f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}"
-                        ),
+                        Event.DMI,
+                        f"Error while parsing JSON from Arduino: {e} - Raw data: {raw[0:50]}",
                     )
                 continue  # skip broken messages
 

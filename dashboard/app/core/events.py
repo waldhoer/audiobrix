@@ -1,4 +1,6 @@
+import traceback
 from blinker import signal
+from blinker import NamedSignal
 
 
 class _Events:
@@ -21,6 +23,13 @@ class _Events:
 
     DMI = "DMI"
     SEQ = "Sequencer"
+
+    @staticmethod
+    def send_tb(signal: NamedSignal, e: Exception, sender, service, msg: str = ""):
+        tb_str = "".join(traceback.format_exception(type(e), e, e.__traceback__))
+        if msg != "":
+            tb_str = msg + " - " + tb_str
+        signal.send(sender, service=service, message=tb_str)
 
 
 Event = _Events()

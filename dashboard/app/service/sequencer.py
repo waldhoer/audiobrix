@@ -35,7 +35,9 @@ class Sequencer:
             try:
                 self.midi_player = MidiPlayer(instrument_nr=self.instrument)
             except Exception as e:
-                Event.error.send(self, service=Event.SEQ, message=str(e))
+                Event.send_tb(
+                    Event.error, e, self, Event.SEQ, "MIDI Player Initialisation failed"
+                )
                 return
 
         if self.running == False:
@@ -67,7 +69,9 @@ class Sequencer:
             try:
                 self.midi_player.set_instrument(self.instrument)
             except Exception as e:
-                Event.error.send(self, service=Event.SEQ, message=str(e))
+                Event.send_tb(
+                    Event.error, e, self, Event.SEQ, "Instrument Change failed"
+                )
                 return
         Event.instrument_change.send(
             self, service=Event.SEQ, message=f"Changed to {instrument}"
