@@ -127,6 +127,10 @@ class DMI:
 
             notes = []
             for i in range(self.config["note_amount"]):
+                if i in Helpers.config["skipped_rows"]:
+                    notes.append([])
+                    continue  # Skip beats defined in settings
+
                 resistance = pressed[i]["Resistance"]
                 brick_amount = self.sanitize_brick_amount(self.base_round(resistance))
                 if self.config["verbose"]:

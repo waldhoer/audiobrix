@@ -51,15 +51,23 @@ function saveTableSettings() {
     const newSettings = {};
     Object.keys(settings).forEach(name => {
         const settingInput = document.getElementById("setting_" + name);
-        if (!settingInput){
-            console.log("Hidden property \"" + name + "\" not updated. This may be intentional.");
-            return;
+
+        if (settingInput.type === "checkbox") {
+            value = convertToType(String(settingInput.checked), typeof settings[name]);
         } 
-        let value = (settingInput.type === "checkbox") ? String(settingInput.checked) : settingInput.value;
-        value = convertToType(value, typeof settings[name]);
+        else if (settingInput.type === "textarea") {
+            value = convertToType(JSON.parse(settingInput.value), typeof settings[name]);
+        } 
+        else {
+            value = convertToType(
+                settingInput.value,
+                typeof settings[name]
+            );
+        }
+
         newSettings[name] = value;
     });
-    console.log("Saving settings:", newSettings);
+    console.info("Saving settings:", newSettings);
 
     writeSettings(newSettings);
 
@@ -173,12 +181,21 @@ async function loadTableSettings() {
 
         // Draw value cell with input field
         const cellValue = document.createElement("td");
-        const valueInput = document.createElement("input");
-        valueInput.type = getInputType(settings[name]);
-        valueInput.value = convertToType(value, settings[name]);
-        if (valueInput.type === "checkbox") {
-            valueInput.checked = Boolean(value);
+
+        let valueInput;
+
+        if (Array.isArray(value)) {
+            valueInput = document.createElement("textarea"); // Special case for json arrays
+            valueInput.value = JSON.stringify(value);
+        } else {
+            valueInput = document.createElement("input");
+            valueInput.type = getInputType(value);
+            valueInput.value = value;
+            if (valueInput.type === "checkbox") {
+                valueInput.checked = Boolean(value);
+            }
         }
+
         valueInput.id = "setting_" + name;
         cellValue.appendChild(valueInput);
         

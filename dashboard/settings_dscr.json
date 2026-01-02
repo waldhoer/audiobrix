@@ -94,5 +94,10 @@
     "show_tutorial" :{
         "text" : "Gibt an, ob das Tutorial beim nächsten Dashboard-Besuch gestartet werden soll. Wird jedes mal danach automatisch deaktiviert.",
         "default" : "false"
+    },
+
+    "skipped_rows" :{
+        "text" : "Enthält alle Taktschläge, die nicht stummgeschaltet werden als Liste. Muss als JSON array angegeben werden. (z.B. [1,5])",
+        "default" : "[]"
     }
 }
