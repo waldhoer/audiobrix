@@ -50,9 +50,17 @@ function midiToName(midi_number){
  * @returns Formatted Text
  */
 function formatText(text, maxLength) {
-  const regex = new RegExp(`(.{1,${maxLength}})(\\s|$)`, 'g');
-  return text.replace(regex, '$1\n');
+  const result = [];
+  let i = 0;
+
+  while (i < text.length) {
+    result.push(text.slice(i, i + maxLength));
+    i += maxLength;
+  }
+
+  return result.join("\n");
 }
+
 
 /**
  * Adds a message to the log (with ending line break)
