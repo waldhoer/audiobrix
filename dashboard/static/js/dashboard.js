@@ -30,6 +30,8 @@ async function initialize(){
 
     await generate_table();
     drawSkippedColumns();
+    await setInstrumentButton();
+    await updateSpeed(true);
 }
 initialize();
 

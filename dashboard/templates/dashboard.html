@@ -48,9 +48,6 @@
         </div>
         
         <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
-          <script>
-            setInstrumentButton();
-          </script>
           <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier" style="padding:0">
             <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
           </button>
@@ -72,7 +69,6 @@
           <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
         </div>
         <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
-        <script>updateSpeed(true);</script>
 
         <script src="/static/js/event_handler.js"></script>
     </div>
