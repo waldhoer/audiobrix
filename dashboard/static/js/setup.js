@@ -29,7 +29,7 @@ async function createSelectorOptions(data, type, selector, proposal_text){
             candidate = port.runnable === true;
         } else if (type === "MIDI"){
             option.value = port.index;
-            name = port.interface + " - " + port.name;
+            name = port.index + " - " + port.name;
             candidate = port.candidate === true;
         } else {
             name = JSON.stringify(port);
