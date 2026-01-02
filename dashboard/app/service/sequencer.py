@@ -1,4 +1,3 @@
-from pygame.midi import MidiException
 from app.service.midi_player import MidiPlayer
 import time, json, threading
 from pythonosc import udp_client
@@ -54,10 +53,6 @@ class Sequencer:
         """
         Stops the sequencer playing gracefully.
         """
-        if self.midi_player:
-            self.midi_player.close()
-            self.midi_player = None
-
         self.running = False
         Event.inactive.send(self, service=Event.SEQ)
 
@@ -69,14 +64,11 @@ class Sequencer:
         """
         self.instrument = instrument
         if self.midi_player:
-            self.midi_player.close()
-
             try:
-                self.midi_player = MidiPlayer(instrument_nr=self.instrument)
+                self.midi_player.set_instrument(self.instrument)
             except Exception as e:
                 Event.error.send(self, service=Event.SEQ, message=str(e))
                 return
-
         Event.instrument_change.send(
             self, service=Event.SEQ, message=f"Changed to {instrument}"
         )
@@ -105,7 +97,7 @@ class Sequencer:
                     self.midi_player.play_note(
                         played_notes, duration=(60.0 / self.bpm)
                     )  # quarter note
-                except (RuntimeError, MidiException):
+                except RuntimeError:
                     pass  # ignore midi errors on termination gracefully
 
             step = (step + 1) % Helpers.config["note_amount"]

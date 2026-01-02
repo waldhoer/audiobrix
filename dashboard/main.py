@@ -17,7 +17,6 @@ from app.api import (
     sequencer as sequencerApi,
     config as configApi,
 )
-from pygame import midi
 from app.core.event_bridge import EventBridge
 from app.service.DMI import DMI
 
@@ -52,7 +51,6 @@ async def lifespan(app: FastAPI):
     )
     app.state.osc.start()
     yield
-    midi.quit()
 
 
 app = FastAPI(lifespan=lifespan)

@@ -1,83 +1,83 @@
-import pygame.midi
 import time
+import mido
+from mido import Message
 from app.core.helpers import Helpers
 from app.core.events import Event
+
+mido.set_backend("mido.backends.rtmidi")
 
 
 class MidiPlayer:
     """
-    Basic MIDI player for playing notes.
+    Robust MIDI player for playing notes using mido + python-rtmidi.
     """
 
     def __init__(self, instrument_nr=1):
-        instrument_nr = (
-            instrument_nr if (instrument_nr >= 0 and instrument_nr <= 127) else 0
-        )
+        self.instrument_nr = instrument_nr if 0 <= instrument_nr <= 127 else 0
+        self.port_name = None
+        self.player = None
 
         try:
-            pygame.midi.init()
-            self.player = pygame.midi.Output(int(Helpers.config["midi_device_id"]))
-            self.player.set_instrument(instrument_nr)
+            self.update_output_device()  # default initializer
         except Exception as e:
             self.player = None
-            if "midi Output not open" in str(e):
-                raise RuntimeError(
-                    "Der MIDI Ausgang konnte nicht aktiviert werden. Stelle sicher, dass ein Audiogerät verbunden ist: "
-                    + str(e)
-                )
-            else:
-                raise e
+            Event.error.send(
+                self,
+                service=Event.DMI,
+                message=f"Der MIDI Ausgang konnte nicht aktiviert werden: {e}",
+            )
 
     def play_note(self, notes: list, duration=0.3, velocity=127):
         """
         Plays a list of MIDI notes at once.
-
-        :param notes: list of notes to play
-        :param duration: how long the note should be played
-        :param velocity: key intensity
         """
+        if not self.player:
+            Event.error.send(
+                self, service=Event.DMI, message="MIDI player is not initialized"
+            )
+            return
+
         for note in notes:
-            self.player.note_on(note, velocity)
+            self.player.send(Message("note_on", note=note, velocity=velocity))
 
         time.sleep(duration)
 
         for note in notes:
-            self.player.note_off(note, velocity)
+            self.player.send(Message("note_off", note=note, velocity=velocity))
 
-    def close(self):
+    def set_instrument(self, instrument_nr: int):
         """
-        Terminates the midi player gracefully
+        Updates the MIDI players instrument.
+
+        :param instrument_nr: The new instrument ID
+        :type instrument_nr: int
         """
-        self.player.close()
-        pygame.midi.quit()
+        self.instrument_nr = instrument_nr
+        self.player.send(Message("program_change", program=instrument_nr))
 
+    def update_output_device(self, new_device_id=None):
+        """
+        Reinitializes the MIDI output device of the midi player.
 
-def update_output_device(self, new_device_id=None):
-    """
-    Reinitializes the MIDI output device of the midi player.
+        :param new_device_id: If None, the ID from settings is used.
+        """
+        try:
+            if new_device_id is None:
+                self.port_name = Helpers.config.get("midi_device_name")
+                if not self.port_name:
+                    available_ports = mido.get_output_names()
+                    if not available_ports:
+                        raise RuntimeError("Keine MIDI-Ausgangsgeräte gefunden")
+                    self.port_name = available_ports[0]
+            else:
+                available_ports = mido.get_output_names()
+                new_device_id = int(new_device_id)
+                if new_device_id < 0 or new_device_id >= len(available_ports):
+                    raise ValueError(f"Ungültige MIDI Device ID '{new_device_id}'")
+                self.port_name = available_ports[new_device_id]
 
-    :param new_device_id: If None, the ID from settings is used.
-    """
-    try:
-        if hasattr(self, "player") and self.player:
-            self.player.close()
+            self.player = mido.open_output(self.port_name)
 
-        pygame.midi.quit()
-        pygame.midi.init()
-
-        if new_device_id is None:
-            new_device_id = int(Helpers.config["midi_device_id"])
-
-        self.player = pygame.midi.Output(new_device_id)
-        self.player.set_instrument(self.instrument_nr)
-
-        print(f"MIDI output updated to device ID {new_device_id}")
-
-    except Exception as e:
-        self.player = None
-        Event.error.send(self, service=Event.DMI, message=str(e))
-        return
-
-    Event.device_change.send(
-        self, service=Event.DMI, message=f"Changed speed to {new_device_id}"
-    )
+        except Exception as e:
+            self.player = None
+            Event.error.send(self, service=Event.DMI, message=str(e))
