@@ -23,7 +23,13 @@ ws = new WebSocket(`ws://${location.host}/ws`);
 let settings;
 
 async function initialize(){
-    settings = await readSettings();
+    settingsReady = readSettings().then(s => {
+        settings = s;
+        return settings;
+    });
+
+    await generate_table();
+    drawSkippedColumns();
 }
 initialize();
 
@@ -251,8 +257,9 @@ function toggleDetails() {
  * @param {int} instrument 
  */
 async function setInstrumentButton(instrument = null){
+    await settingsReady;
+
     if (instrument == null){
-        const settings = await readSettings();
         instrument = settings["instrument"];
     }
 
@@ -313,10 +320,11 @@ function updateSpeedText() {
  * @param {boolean} set_default set true if the default (config) speed should be loaded instead of using the sliders value 
  */
 async function updateSpeed(set_default=false) {
+    await settingsReady;
+    
     const slider = document.getElementById("speedRange");
     const speedValue = document.getElementById("speedValue");
 
-    const settings = await readSettings();
     if (set_default){
         let speed = settings["bpm_playing_speed"];
         slider.value = Number(speed);
@@ -336,8 +344,7 @@ We do not draw the table using document.write because the settings reading
 requires a delay -> Instead we use the DOM method! Remember this!!
 */
 async function generate_table() {
-    const settings = await readSettings();
-
+    await settingsReady;
     const midiKeys = Object.keys(midi_names).map(Number);
 
     // Header
@@ -356,6 +363,11 @@ async function generate_table() {
         
         th.textContent = b + 1;
         th.style.cursor = "pointer"; 
+
+        if (settings["skipped_cols"].includes(b)) {
+            th.style.color = "red";
+        }
+
         th.addEventListener("click", async () => {
             try {
             const index = settings["skipped_cols"].indexOf(b);
@@ -367,7 +379,8 @@ async function generate_table() {
                 th.style.color="black";
             }
             
-            writeSingleSetting("skipped_cols", settings["skipped_cols"])
+            writeSingleSetting("skipped_cols", settings["skipped_cols"]);
+            drawSkippedColumns();
             } catch (error) {
                 console.error("Error sending index:", error);
             }
@@ -521,5 +534,27 @@ function drawCurrentNotes(msg){
         if (cell) {
             cell.classList.add("current");
         }   
+    }
+}
+
+function drawSkippedColumns() {
+    if (!settings) return;
+
+    for (let b = 0; b < settings["note_amount"]; b++) {
+        const isSkipped = settings["skipped_cols"].includes(b);
+
+        for (const note in midi_names) {
+            const cell = document.querySelector(
+                `.cell[data-beat="${b}"][data-row-note="${note}"]`
+            );
+            if (!cell) continue;
+
+            if (isSkipped) {
+                cell.classList.add("muted");
+                cell.classList.remove("active", "current");
+            } else {
+                cell.classList.remove("muted");
+            }
+        }
     }
 }
