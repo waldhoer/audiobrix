@@ -127,7 +127,7 @@ class DMI:
 
             notes = []
             for i in range(self.config["note_amount"]):
-                if i in Helpers.config["skipped_rows"]:
+                if i in Helpers.config["skipped_cols"]:
                     notes.append([])
                     continue  # Skip beats defined in settings
 

@@ -96,7 +96,7 @@
         "default" : "false"
     },
 
-    "skipped_rows" :{
+    "skipped_cols" :{
         "text" : "Enthält alle Taktschläge, die nicht stummgeschaltet werden als Liste. Muss als JSON array angegeben werden. (z.B. [1,5])",
         "default" : "[]"
     }

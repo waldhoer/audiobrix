@@ -55,16 +55,16 @@
                   th.style.cursor = "pointer"; 
                   th.addEventListener("click", async () => {
                       try {
-                        const index = settings["skipped_rows"].indexOf(b);
+                        const index = settings["skipped_cols"].indexOf(b);
                         if (index === -1) {
-                            settings["skipped_rows"].push(b);
+                            settings["skipped_cols"].push(b);
                             th.style.color="red";
                         } else {
-                            settings["skipped_rows"].splice(index, 1);
+                            settings["skipped_cols"].splice(index, 1);
                             th.style.color="black";
                         }
                         
-                        writeSingleSetting("skipped_rows", settings["skipped_rows"])
+                        writeSingleSetting("skipped_cols", settings["skipped_cols"])
                       } catch (error) {
                           console.error("Error sending index:", error);
                       }
