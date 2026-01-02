@@ -42,12 +42,27 @@ class DMI:
 
         return True
 
-    def base_round(self, value) -> int:
+    def base_round(self, resistance) -> int:
         """
         Rounds a given value to the nearest base.
+        This calculates the absolute (unsanitized) "brick" amount.
+
+        :resistance: The raw resistance value from the arduino
         """
         adjustment = 1
-        return round((value - adjustment) / self.rounding_base)
+        return round((resistance - adjustment) / self.rounding_base)
+
+    def sanitize_brick_amount(self, brick_amount) -> int:
+        """
+        Sanitizes the resistance values to lie within a specific resistance range.
+
+        :resistance: The base_rounded resistance, equivalent to the brick amount
+        """
+        if brick_amount > Helpers.config["max_note_height"]:
+            return Helpers.config["max_note_height"]
+        if brick_amount < 0:
+            return 0
+        return brick_amount
 
     def capture(self) -> None:
         """
@@ -113,7 +128,7 @@ class DMI:
             notes = []
             for i in range(self.config["note_amount"]):
                 resistance = pressed[i]["Resistance"]
-                brick_amount = self.base_round(resistance)
+                brick_amount = self.sanitize_brick_amount(self.base_round(resistance))
                 if self.config["verbose"]:
                     print(
                         colored(
