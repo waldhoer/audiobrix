@@ -47,9 +47,29 @@
                 const emptyTh = document.createElement('th'); 
                 theadRow.appendChild(emptyTh);
 
+                // Column Skip Buttons (Table Headers)
                 for (let b = 0; b < settings["note_amount"]; b++) {
                   const th = document.createElement('th');
+                  
                   th.textContent = b + 1;
+                  th.style.cursor = "pointer"; 
+                  th.addEventListener("click", async () => {
+                      try {
+                        const index = settings["skipped_rows"].indexOf(b);
+                        if (index === -1) {
+                            settings["skipped_rows"].push(b);
+                            th.style.color="red";
+                        } else {
+                            settings["skipped_rows"].splice(index, 1);
+                            th.style.color="black";
+                        }
+                        
+                        writeSingleSetting("skipped_rows", settings["skipped_rows"])
+                      } catch (error) {
+                          console.error("Error sending index:", error);
+                      }
+                  });
+
                   theadRow.appendChild(th);
                 }
 
