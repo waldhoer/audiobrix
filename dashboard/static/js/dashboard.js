@@ -334,19 +334,22 @@ async function generate_table() {
 
         th.addEventListener("click", async () => {
             try {
-            const index = settings["skipped_cols"].indexOf(b);
-            if (index === -1) {
-                settings["skipped_cols"].push(b);
-                th.style.color="red";
-            } else {
-                settings["skipped_cols"].splice(index, 1);
-                th.style.color="black";
-            }
-            
-            writeSingleSetting("skipped_cols", settings["skipped_cols"]);
-            drawSkippedColumns();
+                const index = settings["skipped_cols"].indexOf(b);
+                if (index === -1) {
+                    settings["skipped_cols"].push(b);
+                    th.style.color="red";
+                    operation = "stummgeschalten"
+                } else {
+                    settings["skipped_cols"].splice(index, 1);
+                    th.style.color="black";
+                    operation = "freigeschalten"
+                }
+                
+                writeSingleSetting("skipped_cols", settings["skipped_cols"]);
+                drawSkippedColumns();
+                logMessage("Taktschlag "+(b+1)+" "+operation, Emojis.notes)
             } catch (error) {
-                console.error("Error sending index:", error);
+                logMessage("Netzwerkfehler beim Stummschalten von Taktschlag "+(b+1)+":\n" + error,Emojis.err,"red");
             }
         });
 
