@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {number} midi_number
  */
 function midiToName(midi_number){
-    return midi_names[midi_number] ?? "\u{26A0}"; // warning sign
+    return midi_names[midi_number] ?? Emojis.alert; // warning sign
 }
 
 /**
@@ -75,14 +75,16 @@ function formatText(text, maxLength) {
  * @param {*} color Optional color of the message
  * @param {*} rt If true, the message is added to the real-time log
  */
-function logMessage(message, color) {
+function logMessage(message, emoji, color) {
     const log = document.getElementById("log");
 
     const span = document.createElement("div");
     if (color) {
         span.style.color = color;
     }
-    span.textContent = formatText(message, 60); 
+
+    text = (emoji) ? (emoji + " " + message) : message;
+    span.textContent = formatText(text, 60); 
     
     log.appendChild(span);
 
@@ -251,9 +253,10 @@ async function changeInstrumentSetting(endpoint_uri, parameters, title){
         await fetch_json(url);
 
     } catch (err) {
-        logMessage("Netzwerkfehler beim Wechseln von " + title + ": " + err, "red");
+        logMessage("Netzwerkfehler beim Wechseln von " + title + ": " + err, Emojis.error, "red");
         return false;
     }
+    return true;
 }
 
 /**
@@ -263,6 +266,9 @@ async function changeInstrumentSetting(endpoint_uri, parameters, title){
 async function setInstrument(instrument) {
     if (changeInstrumentSetting("/sequencer/instrument", {"channel" : instrument}, "Instrument")){
         setInstrumentButton(instrument);
+        logMessage("Instrument geändert auf " + instrument, Emojis.success)
+    } else {
+        logMessage("Fehler beim Ändern des Instruments. Logs beachten." + instrument, Emojis.alert)
     }
 }
 

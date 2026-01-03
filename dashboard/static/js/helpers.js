@@ -1,3 +1,12 @@
+const Emojis = Object.freeze({
+    alert: "⚠️",
+    wave:"👋",
+    success: "✅",
+    error: "⛔",
+    notes: "🎶",
+    star: "⭐"
+});
+    
 /**
  * Fetches a ressource from the given URI and returns the resulting JSON Object.
  * @param {String} uri The uri to fetch

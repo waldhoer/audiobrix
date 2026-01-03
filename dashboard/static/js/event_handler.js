@@ -26,7 +26,7 @@ ws.onmessage = (event) => {
         let body = data.body
 
         if (data.name === "active") {
-            logMessage("\u{1F973} " +body.service + " wurde gestartet.");
+            logMessage(body.service + " wurde gestartet.", Emojis.success);
             if (body.service == "DMI"){
                 setDMIStateText(true);
                 setDMIButtonState(true);
@@ -37,7 +37,7 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "inactive") {
-            logMessage("\u{1F44B} " +body.service + " wurde beendet.");
+            logMessage(body.service + " wurde beendet.", Emojis.success);
             if (body.service == "DMI"){
                 setDMIStateText(false);
                 setDMIButtonState(false);
@@ -48,14 +48,14 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "warning") {
-            logMessage("\u{26A0} WARNING: " + body.service + " - " + body.message, "orange");
+            logMessage("Warnung beim " + body.service + ":\n" + body.message, Emojis.alert, "orange");
         }
 
         if (data.name === "error") {
             if (body.service == "DMI") {
                 setDMIButtonState(false);
                 setDMIStateText(false);
-                logMessage("\u{26D3} ERROR: " + body.service + " - " +body.message, "red");
+                logMessage("Fehler beim " + body.service + ":\n" + body.message, Emojis.error, "red");
                 showNotification("Die Blockerkennung konnte nicht gestartet werden.");
             }
         }
@@ -63,18 +63,18 @@ ws.onmessage = (event) => {
         if (data.name === "disconnected") {
             setDMIButtonState(false);
             setDMIStateText(false);
-            logMessage("\u{26D3} DISCONNECTED: " + body.message, "red");
+            logMessage("Verbindungsabbruch:\n" + body.message, Emojis.alert, "red");
             showNotification("Der Arduino wurde getrennt. Die Blockerkennung wurde gestoppt.");
         }
     }
 };
 
 ws.onopen = () => {
-    logMessage("Dashboard gestartet\u{1F44B}"); // winking hand
-    logMessage("Drücke \"Start\" um loszulegen.\u{1F3B6}"); // musical notes
+    logMessage("Dashboard gestartet", Emojis.wave);
+    logMessage("Drücke auf \"Blockerkennung Starten\" oder \"Sequencer Starten\" um loszulegen.", Emojis.notes); 
 };
 ws.onerror = (e) => {
-    logMessage("Beim Dashboard ist ein Fehler aufgetreten: " + e , "red");
+    logMessage("Beim Dashboard ist ein Fehler aufgetreten: " + e , Emojis.error,"red");
 };
 
 // On page load, everything is stopped

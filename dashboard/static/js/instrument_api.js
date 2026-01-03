@@ -6,7 +6,7 @@ async function startDMI() {
     try {
         await fetch_json("/start");
     } catch (err) {
-        logMessage("Fehler beim Starten des DMI: " + err, "red");
+        logMessage("Fehler beim Starten des DMI: " + err, Emojis.error, "red");
     }
 }
 
@@ -17,7 +17,7 @@ async function stopDMI() {
     try {
         await fetch("/stop");
     } catch (err) {
-        logMessage("Fehler beim Stoppen des DMI: " + err, "red");
+        logMessage("Fehler beim Stoppen des DMI: " + err, Emojis.error, "red");
     }
 }
 
@@ -28,7 +28,7 @@ async function startSequencer() {
     try {
         await fetch_json("/sequencer/start")
     } catch (err) {
-        logMessage("Fehler beim Starten des Sequncers: " + err, "red");
+        logMessage("Fehler beim Starten des Sequncers: " + err, Emojis.error, "red");
     }
 }
 
@@ -39,7 +39,7 @@ async function stopSequencer() {
     try {
         await fetch("/sequencer/stop");
     } catch (err) {
-        logMessage("Fehler beim Stoppen des Sequencers: " + err, "red");
+        logMessage("Fehler beim Stoppen des Sequencers: " + err, Emojis.error, "red");
     }
 }
 

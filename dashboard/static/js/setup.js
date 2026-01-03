@@ -37,7 +37,7 @@ async function createSelectorOptions(data, type, selector, proposal_text){
         }
 
         if (candidate) {
-            option.textContent = "\u{2B50} " + name + " \u{2B50}"; // star for candidate
+            option.textContent = Emojis.star +" " + name + " " + Emojis.star; // star for candidate
             option.selected = (type === "COM") ? true : (port.index === 0);
             proposal_text.innerHTML += "<b>" + name + "</b><br>";
         } else {
@@ -69,7 +69,7 @@ async function getSystestResults(){
     textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist. Unser Systemtest empfiehlt diesen Anschluss: ";
     if (textbox_proposal.innerHTML === ""){
         textbox.innerHTML = "Wähle hier den passenden Anschluss, an dem der Arduino verbunden ist.";
-        textbox_proposal.innerHTML = "<b>\u{26A0}\u{FE0F} Es wurde kein passender Anschluss gefunden.<br>Manuelles Testen notwendig!</b>";
+        textbox_proposal.innerHTML = "<b>"+Emojis.alert+" Es wurde kein passender Anschluss gefunden.<br>Manuelles Testen notwendig!</b>";
         textbox_proposal.style.color = "red";
     }
 
