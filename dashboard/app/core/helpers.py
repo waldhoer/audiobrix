@@ -39,7 +39,7 @@ class Helpers:
         :param key: The new settings key
         :param value: The new settings value
         """
-        if not key or len(key) == 0:
+        if not key or len(key) == 0 or value == None:
             raise AttributeError(
                 f"Invalid or empty parameters provided for single settings write: '{key}' with '{value}'"
             )
