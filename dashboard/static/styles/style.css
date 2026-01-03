@@ -71,6 +71,41 @@ body {
    opacity: .7;
 }
 
+.dashboard-row {
+  display: flex;
+  align-items: stretch; 
+  width: fit-content;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+.dashboard-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  min-height: 0;
+  max-height: calc(100vh - 220px);
+}
+
+.dashboard-left,
+.dashboard-right {
+  align-self: stretch;
+}
+
+.log-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+
 .dashboard-scale {
   transform-origin: top center;
   display: flex;
@@ -84,23 +119,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    transform: scale(1);
-    transform-origin: top center;
 }
-
-@media (max-height: 900px) {
-  .dashboard {
-    transform: scale(0.9);
-  }
-}
-
-@media (max-height: 800px) {
-  .dashboard {
-    transform: scale(0.85);
-  }
-}
-
-
 .grid-wrapper {
     display: inline-block; /* shrink to table size */
 }
@@ -117,19 +136,11 @@ body {
 }
 
 .log{
-  margin: 0;
+  margin: 0px;
   justify-content: center;
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
-}
-
-.log-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 6px;
-    height:200px; /* match table height */
 }
 
 .log-container pre {
@@ -145,6 +156,7 @@ body {
 
     background: #f2f4f7;
     box-shadow: rgb(208, 213, 221) 0px 0px 0px 1px inset;
+    margin: 0;
     color: #000000;
     padding: 12px 16px;
     border-radius: 12px;
@@ -250,10 +262,8 @@ body {
     align-items: center;
   }
 
-  /* Ensure all main blocks share table width */
 .grid-wrapper, .button-group, .log-container {
-    width: fit-content; /* match table width */
-    max-width: 100%;
+    width: 100%;
 }
 
 .floating-menu-vertical .button {

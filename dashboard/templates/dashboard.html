@@ -21,13 +21,15 @@
   
   <div class="dashboard-scale">
     <div class="dashboard">
-      <div class="grid-wrapper">
-        <div class="grid-container">
-          <table class="grid" id="grid">
-            <thead id="grid-head"></thead>
-            <tbody id="grid-body"></tbody>
-          </table>
+      <div class="dashboard-row">
 
+        <!-- LEFT COLUMN -->
+        <div class="dashboard-left">
+          <div class="grid-container">
+            <table class="grid" id="grid">
+              <thead id="grid-head"></thead>
+              <tbody id="grid-body"></tbody>
+            </table>
           </div>
 
           <div id="output"></div>
@@ -36,41 +38,44 @@
             <button id="dmiButton" class="button button-green" onclick="toggleDMI()">▶️ Blockerkennung starten</button>
             <button id="seqButton" class="button button-green" onclick="toggleSequencer()">🔁 Sequencer starten</button>
           </div>
+
+          <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
+            <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier" style="padding:0">
+              <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
+            </button>
+            <button class="button" id="toggleInstrument10" onclick="setInstrument(10)" title="Xylophon" style="padding:0">
+              <p><img width="24" height="24" src="https://img.icons8.com/android/24/xylophone.png" alt="xylophone"/></p>
+            </button>
+            <button class="button" id="toggleInstrument51" onclick="setInstrument(51)" title="Streicher" style="padding:0">
+              <p><img width="24" height="24" src="https://img.icons8.com/android/24/violin.png" alt="violin"/></p>
+            </button>
+            <button class="button" id="toggleInstrument56" onclick="setInstrument(56)" title="Trompete" style="padding:0">
+              <p><img width="24" height="24" src="https://img.icons8.com/android/24/trumpet.png" alt="trumpet"/></p>
+            </button>
+            <button class="button" id="toggleInstrument24" onclick="setInstrument(24)" title="Gitarre" style="padding:0">
+              <p><img width="24" height="24" src="https://img.icons8.com/android/24/guitar.png" alt="guitar"/></p>
+            </button>
+          </div>
           
-          <div class="log-container" id="logContainer" style="display: none;">
+          <div class="slidecontainer" id="speed_slider">
+            <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
+          </div>
+          <p style="margin:0;text-align: center;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="dashboard-right" id="logContainer" style="display: none;">
+          <div class="log-container">
             <pre id="log"></pre>
             <p id="dmi_state" class="log">Blockerkennung: ?</p>
             <p id="seq_state" class="log">Sequencer: ?</p>
             <p id="pattern_log" class="log">Erkanntes Notenblatt: ?</p>
             <p id="step_log" class="log">Gespielte Noten: ?</p>
           </div>
+        </div>
 
-        </div>
-        
-        <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
-          <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier" style="padding:0">
-            <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
-          </button>
-          <button class="button" id="toggleInstrument10" onclick="setInstrument(10)" title="Xylophon" style="padding:0">
-            <p><img width="24" height="24" src="https://img.icons8.com/android/24/xylophone.png" alt="xylophone"/></p>
-          </button>
-          <button class="button" id="toggleInstrument51" onclick="setInstrument(51)" title="Streicher" style="padding:0">
-            <p><img width="24" height="24" src="https://img.icons8.com/android/24/violin.png" alt="violin"/></p>
-          </button>
-          <button class="button" id="toggleInstrument56" onclick="setInstrument(56)" title="Trompete" style="padding:0">
-            <p><img width="24" height="24" src="https://img.icons8.com/android/24/trumpet.png" alt="trumpet"/></p>
-          </button>
-          <button class="button" id="toggleInstrument24" onclick="setInstrument(24)" title="Gitarre" style="padding:0">
-            <p><img width="24" height="24" src="https://img.icons8.com/android/24/guitar.png" alt="guitar"/></p>
-          </button>
-        </div>
-        
-        <div class="slidecontainer" id="speed_slider">
-          <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
-        </div>
-        <p style="margin:0;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
-
-        <script src="/static/js/event_handler.js"></script>
+      </div>
+      <script src="/static/js/event_handler.js"></script>
     </div>
 
     <div class="floating-menu-vertical">
