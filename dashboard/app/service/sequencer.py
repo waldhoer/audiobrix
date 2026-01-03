@@ -34,7 +34,6 @@ class Sequencer:
         if not self.midi_player:
             try:
                 self.midi_player = MidiPlayer(instrument_nr=self.instrument)
-                self.midi_player.set_instrument(self.instrument)
             except Exception as e:
                 Event.send_tb(
                     Event.error, e, self, Event.SEQ, "MIDI Player Initialisation failed"

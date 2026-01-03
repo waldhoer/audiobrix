@@ -19,6 +19,8 @@ class MidiPlayer:
 
         try:
             self.update_output_device()  # default initializer
+            self.set_instrument(self.instrument_nr)
+
         except Exception as e:
             self.player = None
             Event.error.send(
