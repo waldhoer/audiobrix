@@ -32,7 +32,7 @@ async function initialize(){
     drawSkippedColumns();
     await setInstrumentButton();
     await updateSpeed(true);
-    await drawSheet([],[],[],[],[],[],[],[]);
+    await drawSheet({ data: Array.from({ length: 8 }, () => []) });
 }
 
 // Explicetly wait for the DOM to be loaded
