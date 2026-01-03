@@ -23,21 +23,18 @@ class MidiPlayer:
 
         except Exception as e:
             self.player = None
-            Event.error.send(
-                self,
-                service=Event.DMI,
-                message=f"Der MIDI Ausgang konnte nicht aktiviert werden: {e}",
-            )
+            raise RuntimeError(
+                "MIDI Player Initialisation failed. Are audio devices available?"
+            ) from e
 
     def play_note(self, notes: list, duration=0.3, velocity=127):
         """
         Plays a list of MIDI notes at once.
         """
         if not self.player:
-            Event.error.send(
-                self, service=Event.DMI, message="MIDI player is not initialized"
+            raise RuntimeError(
+                "Midi Player not initialized. Possibly missing output port."
             )
-            return
 
         for note in notes:
             self.player.send(Message("note_on", note=note, velocity=velocity))
@@ -63,23 +60,19 @@ class MidiPlayer:
 
         :param new_device_id: If None, the ID from settings is used.
         """
-        try:
-            if new_device_id is None:
-                self.port_name = Helpers.config.get("midi_device_name")
-                if not self.port_name:
-                    available_ports = mido.get_output_names()
-                    if not available_ports:
-                        raise RuntimeError("Keine MIDI-Ausgangsgeräte gefunden")
-                    self.port_name = available_ports[0]
-            else:
+
+        if new_device_id is None:
+            self.port_name = Helpers.config.get("midi_device_name")
+            if not self.port_name:
                 available_ports = mido.get_output_names()
-                new_device_id = int(new_device_id)
-                if new_device_id < 0 or new_device_id >= len(available_ports):
-                    raise ValueError(f"Ungültige MIDI Device ID '{new_device_id}'")
-                self.port_name = available_ports[new_device_id]
+                if not available_ports:
+                    raise RuntimeError("No compatible Midi ports found!")
+                self.port_name = available_ports[0]
+        else:
+            available_ports = mido.get_output_names()
+            new_device_id = int(new_device_id)
+            if new_device_id < 0 or new_device_id >= len(available_ports):
+                raise ValueError(f"Invalid MIDI Device ID '{new_device_id}'")
+            self.port_name = available_ports[new_device_id]
 
-            self.player = mido.open_output(self.port_name)
-
-        except Exception as e:
-            self.player = None
-            Event.error.send(self, service=Event.DMI, message=str(e))
+        self.player = mido.open_output(self.port_name)

@@ -36,8 +36,14 @@ class Sequencer:
                 self.midi_player = MidiPlayer(instrument_nr=self.instrument)
             except Exception as e:
                 Event.send_tb(
-                    Event.error, e, self, Event.SEQ, "MIDI Player Initialisation failed"
+                    Event.error,
+                    e,
+                    self,
+                    Event.SEQ,
+                    "MIDI Player Initialisation failed. Are audio devices available?",
                 )
+                self.midi_player = None
+                self.stop()
                 return
 
         if self.running == False:
@@ -101,8 +107,16 @@ class Sequencer:
                     self.midi_player.play_note(
                         played_notes, duration=(60.0 / self.bpm)
                     )  # quarter note
-                except RuntimeError:
-                    pass  # ignore midi errors on termination gracefully
+                except Exception as e:
+                    Event.send_tb(
+                        Event.error,
+                        e,
+                        self,
+                        Event.SEQ,
+                        "The Sequencer will now be stopped.",
+                    )
+                    self.stop()
+                    return
 
             step = (step + 1) % Helpers.config["note_amount"]
 

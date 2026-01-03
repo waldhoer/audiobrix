@@ -12,19 +12,23 @@ async def start_sequencer(request: Request):
     """
     Endpoint for starting the sequencer service.
     """
-    if request.app.state.sequencer is None:
+    app_sequencer = request.app.state.sequencer
+    if app_sequencer is None:
         try:
             sequencer = Sequencer(
                 request.app.state.dashboard,
                 Helpers.config["bpm_playing_speed"],
                 Helpers.config["instrument"],
             )
-            request.app.state.sequencer = sequencer
+            app_sequencer = sequencer
             request.app.state.osc.sequencer = sequencer  # also the OSC Manager needs to be informed about the new sequencer for pattern broadcasting
-
-            request.app.state.sequencer.start()
         except Exception as e:
-            Event.error.send("API_SeqStart", service="Sequencer", message=str(e))
+            Event.send_tb(Event.error, e, "API_SeqStart", Event.SEQ)
+
+    try:
+        app_sequencer.start()
+    except Exception as e:
+        Event.send_tb(Event.error, e, "API_SeqStart", Event.SEQ)
 
 
 @router.get("/sequencer/stop")
