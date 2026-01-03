@@ -33,7 +33,12 @@ async function initialize(){
     await setInstrumentButton();
     await updateSpeed(true);
 }
-initialize();
+
+// Explicetly wait for the DOM to be loaded
+// Just calling initialize causes race conditions!
+document.addEventListener("DOMContentLoaded", () => {
+    initialize();
+});
 
 /**
  * Maps a name to a MIDI number.
