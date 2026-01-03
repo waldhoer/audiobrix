@@ -5,6 +5,7 @@
 
 # User-specific files
 */build
+*build
 dashboard/main.spec
 *.rsuser
 *.suo
