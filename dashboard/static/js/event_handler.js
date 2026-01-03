@@ -51,11 +51,18 @@ ws.onmessage = (event) => {
         }
 
         if (data.name === "error") {
-            if (body.service == "DMI") {
+            if (body.service === "DMI") {
                 setDMIButtonState(false);
                 setDMIStateText(false);
                 logMessage("Fehler beim " + body.service + ":\n" + body.message, Emojis.error, "red");
                 showNotification("Die Blockerkennung konnte nicht gestartet werden.");
+            } else if (body.service === "Sequencer") {
+                setSequencerButtonState(false);
+                setSequencerButtonState(false);
+                logMessage("Fehler beim Sequencer:\n" + body.message, Emojis.error, "red");
+                showNotification("Der Sequencer konnte nicht gestartet werden.");
+            } else {
+                logMessage("Fehler bei " + body.service+":\n" + body.message, Emojis.error, "red");
             }
         }
 
