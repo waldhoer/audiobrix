@@ -9,7 +9,7 @@
     "application_name": "AudioBrix",
     "instrument": 10,
     "full_bar_view": true,
-    "show_tutorial": false,
+    "show_tutorial": true,
     "skipped_cols": [],
     "use_remote_osc": false,
     "dashboard_port": 8000,
