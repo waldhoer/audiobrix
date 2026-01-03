@@ -18,8 +18,6 @@ async function redirect_first(){
  */
 async function createSelectorOptions(data, type, selector, proposal_text){
     data.forEach(port => {
-        console.log(port);
-
         const option = document.createElement("option");
 
         let name, candidate = false;
@@ -85,7 +83,6 @@ async function saveSetup() {
     const select_port = document.querySelector("#select_port");
     const select_midi = document.querySelector("#select_midi");
 
-    console.log(select_port.value, select_midi.value);
     writeSingleSetting("arduino_port", select_port.value);
     writeSingleSetting("midi_device_id", Number(select_midi.value));
 
