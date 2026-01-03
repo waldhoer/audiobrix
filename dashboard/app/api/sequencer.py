@@ -21,10 +21,13 @@ async def start_sequencer(request: Request):
             )
             request.app.state.sequencer = sequencer
             request.app.state.osc.sequencer = sequencer  # also the OSC Manager needs to be informed about the new sequencer for pattern broadcasting
-
-            request.app.state.sequencer.start()
         except Exception as e:
-            Event.error.send("API_SeqStart", service="Sequencer", message=str(e))
+            Event.send_tb(Event.error, e, "API_SeqStart", Event.SEQ)
+
+    try:
+        request.app.state.sequencer.start()
+    except Exception as e:
+        Event.send_tb(Event.error, e, "API_SeqStart", Event.SEQ)
 
 
 @router.get("/sequencer/stop")
