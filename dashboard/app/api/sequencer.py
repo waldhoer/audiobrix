@@ -5,7 +5,6 @@ from app.service.sequencer import Sequencer
 from app.core.events import Event
 
 router = APIRouter()
-config = Helpers.config
 
 
 @router.get("/sequencer/start")
@@ -17,8 +16,8 @@ async def start_sequencer(request: Request):
         try:
             sequencer = Sequencer(
                 request.app.state.dashboard,
-                config["bpm_playing_speed"],
-                config["instrument"],
+                Helpers.config["bpm_playing_speed"],
+                Helpers.config["instrument"],
             )
             request.app.state.sequencer = sequencer
             request.app.state.osc.sequencer = sequencer  # also the OSC Manager needs to be informed about the new sequencer for pattern broadcasting
@@ -45,9 +44,9 @@ async def change_instrument(request: Request, channel: int):
     Endpoint for changing the instrument of the sequencer.
     The channel should be a GM number (0-127).
     """
+    Helpers.write("instrument", channel)
     sequencer = request.app.state.sequencer
     if sequencer:
-        Helpers.write("instrument", channel)
         return sequencer.change_instrument(channel)
 
 
@@ -58,8 +57,8 @@ async def change_speed(request: Request, bpm: int):
     The bpm should be between 20 and 300.
     """
     sequencer = request.app.state.sequencer
+    Helpers.write("bpm_playing_speed", bpm)
     if sequencer:
-        Helpers.write("bpm_playing_speed", bpm)
         return sequencer.change_speed(bpm)
 
 
