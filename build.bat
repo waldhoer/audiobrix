@@ -1,4 +1,8 @@
-cd dashboard
-copy "settings.json" ".\dist\settings.json"
-copy "settings_dscr.json" ".\dist\settings_dscr.json"
-pyinstaller main.py --add-data "settings.json;." --add-data "settings_dscr.json;." --add-data "templates;templates" --add-data "static;static" --onefile
+pyinstaller dashboard/main.py ^
+  --onefile ^
+  --paths dashboard ^
+  --collect-submodules app ^
+  --add-data "dashboard/settings.json;." ^
+  --add-data "dashboard/settings_dscr.json;." ^
+  --add-data "dashboard/templates;templates" ^
+  --add-data "dashboard/static;static"
