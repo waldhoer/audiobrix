@@ -32,6 +32,7 @@ async function initialize(){
     drawSkippedColumns();
     await setInstrumentButton();
     await updateSpeed(true);
+    await drawSheet([],[],[],[],[],[],[],[]);
 }
 
 // Explicetly wait for the DOM to be loaded
@@ -93,7 +94,7 @@ function logMessage(message, emoji, color) {
 
 function logPattern(message) {
     const log = document.getElementById("pattern_log");
-    log.textContent = message;
+    log.textContent = message+" | ";
 }
 
 function logStep(message) {
@@ -165,11 +166,11 @@ function setSequencerButtonState(active) {
 }
 
 function setDMIStateText(state){
-    document.getElementById("dmi_state").textContent = "Blockerkennung: " + (state ? "Aktiv" : "Inaktiv");
+    document.getElementById("dmi_state").textContent = "DMI: " + (state ? "Aktiv" : "Inaktiv") + " | ";
 }
 
 function setSequencerStateText(state){
-    document.getElementById("seq_state").textContent = "Blockerkennung: " + (state ? "Aktiv" : "Inaktiv");
+    document.getElementById("seq_state").textContent = "SEQ: " + (state ? "Aktiv" : "Inaktiv");
 }
 /**
  * Toggles the brick recognition state and updates the button accordingly

@@ -5,7 +5,7 @@ ws.onmessage = (event) => {
     if ('address' in data && 'data' in data){
         msg = data.data; // UDPClient adds this additional layer
         if (msg.type === "pattern") {
-            message = "Erkanntes Notenblatt: ";
+            message = "Notenblatt: ";
             msg.data.forEach(list => { 
                 message += list.map(n => midiToName(n)).join("+") + "; ";
             });
@@ -15,7 +15,7 @@ ws.onmessage = (event) => {
         }
 
         if (msg.type === "step") {
-            logStep("Gespielte Note(n): " + msg.data.map(n => midiToName(n)).join("+"));
+            logStep("Gespielt: " + msg.data.map(n => midiToName(n)).join("+"));
             drawCurrentNotes(msg);
         }
     }

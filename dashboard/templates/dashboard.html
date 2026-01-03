@@ -39,7 +39,7 @@
             <button id="seqButton" class="button button-green" onclick="toggleSequencer()">🔁 Sequencer starten</button>
           </div>
 
-          <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 0;">
+          <div class="button-group" id="instrument_btn" style="padding-bottom: 0px; padding-top: 12px;">
             <button class="button" id="toggleInstrument0" onclick="setInstrument(0)" title="Klavier" style="padding:0">
               <p><img width="24" height="24" src="https://img.icons8.com/material/24/piano.png" alt="piano"/></p>
             </button>
@@ -57,7 +57,7 @@
             </button>
           </div>
           
-          <div class="slidecontainer" id="speed_slider">
+          <div class="slidecontainer" id="speed_slider" style="padding-top: 12px;">
             <input type="range" min="80" max="220" value="80" class="slider" id="speedRange" oninput="updateSpeedText()" onchange="updateSpeed()">
           </div>
           <p style="margin:0;text-align: center;">Geschwindigkeit: <span id="speedValue">80</span> BPM</p>
@@ -67,10 +67,14 @@
         <div class="dashboard-right" id="logContainer" style="display: none;">
           <div class="log-container">
             <pre id="log"></pre>
-            <p id="dmi_state" class="log">Blockerkennung: ?</p>
-            <p id="seq_state" class="log">Sequencer: ?</p>
-            <p id="pattern_log" class="log">Erkanntes Notenblatt: ?</p>
-            <p id="step_log" class="log">Gespielte Noten: ?</p>
+            <div style="display: flex; gap: 4px;" class="log">
+              <p id="dmi_state" class="log">DMI: ? | </p>
+              <p id="seq_state" class="log">SEQ: ?</p>
+            </div>
+            <div style="display: flex; gap: 4px;" class="log">
+              <p id="pattern_log" class="log">Notenblatt: ? | </p>
+              <p id="step_log" class="log">Gespielt: ? </p>
+            </div>
           </div>
         </div>
 
