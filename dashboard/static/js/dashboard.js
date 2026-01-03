@@ -328,7 +328,7 @@ async function generate_table() {
         
         th.textContent = b + 1;
         th.style.cursor = "pointer"; 
-
+        th.id = "grid_head"+(b+1)
         if (settings["skipped_cols"].includes(b)) {
             th.style.color = "red";
         }
@@ -389,6 +389,7 @@ async function generate_table() {
         introJs().setOptions({
         steps: [
             { element: '#grid', intro: 'Hier werden die erkannten Blöcke angezeigt. Durch klicken auf die einzelnen Blöcke können Noten stummgeschaltet werden.' },
+            { element: '#grid_head1', intro: 'Durch Klicken auf einzelne Taktschläge, können diese stumm- oder wieder laut geschaltet werden.' },
             { element: '#dmiButton', intro: 'Hier wird die Notenblockerkennung gestartet und gestoppt. Damit werden die erkannten Blöcke angezeigt.' },
             { element: '#seqButton', intro: 'Hier wird der Sequencer gestartet und gestoppt. Damit werden die Noten abgespielt und hörbar gemacht.' },
             { element: '#instrument_btn', intro: 'Hier kann zwischen unterschiedlichen Instrumenten gewählt werden.' },
