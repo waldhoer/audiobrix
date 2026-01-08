@@ -139,10 +139,12 @@ class Helpers:
             return True
 
         except Exception as e:
-            Event.error.send(
+            Event.send_tb(
+                Event.warning,
+                e,
                 "Miditest_Connection_Test",
-                service="systest",
-                message=f"Port '{device_id}' failed: {e}",
+                "systest",
+                f"Port '{device_id}' failed",
             )
             return False
 
@@ -192,7 +194,7 @@ class Helpers:
                     }
                 )
             except Exception as e:
-                Event.error.send("Comtest_Failed", service="systest", message=str(e))
+                Event.send_tb(Event.error, e, "Comtest_Failed", service="systest")
 
         return result
 
@@ -272,7 +274,7 @@ class Helpers:
             descriptions = json.load(description_file)
             if len(descriptions) == 0:
                 msg = KeyError(f"Settings Descriptions are empty. Exiting.")
-                Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                Event.send_tb(Event.error, msg, "Helpers", service="Helpers Config")
                 raise msg
             cls.descriptions = descriptions
 
@@ -282,7 +284,7 @@ class Helpers:
 
             if len(config) == 0:
                 msg = KeyError(f"Settings are empty. Exiting.")
-                Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                Event.send_tb(Event.error, msg, "Helpers", service="Helpers Config")
                 raise msg
 
             for key in config.keys():
@@ -290,7 +292,7 @@ class Helpers:
                     msg = KeyError(
                         f"Expected setting variable {key} not found. Exiting."
                     )
-                    Event.error.send("Helpers", service="Helpers Config", msg=str(msg))
+                    Event.send_tb(Event.error, msg, "Helpers", service="Helpers Config")
                     raise msg
 
             cls.config = config
