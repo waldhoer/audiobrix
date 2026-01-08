@@ -21,7 +21,7 @@ async def start(request: Request):
             if request.app.state.dmi.initialize():
                 threading.Thread(target=request.app.state.dmi.run, daemon=True).start()
         except Exception as e:
-            Event.error.send("API_Start", service="DMI", message=str(e))
+            Event.send_tb(Event.error, e, "API_Start", Event.DMI)
     else:
         Event.warning.send(
             "API_Start", service="DMI", message="The DMI is already active."
