@@ -26,3 +26,22 @@ class MainTester(unittest.TestCase):
         with TestClient(app) as client:
             response = client.get("/")
             self.assertEqual(response.status_code, 200)
+
+    def test_dmi_start_not_connected(self):
+        """
+        Tests if an exception is thrown when the USB is not connected.
+        Only run, if no USB is connected.
+
+        """
+        received = []
+
+        def receiver(sender, **kwargs):
+            received.append((sender, kwargs))
+
+        Event.error.connect(receiver, weak=False)
+
+        with TestClient(app) as client:
+            response = client.get("/start")
+            assert response.status_code == 200
+
+        assert len(received) == 1
