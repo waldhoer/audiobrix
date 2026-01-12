@@ -42,16 +42,3 @@ async function stopSequencer() {
         logMessage("Fehler beim Stoppen des Sequencers: " + err, Emojis.error, "red");
     }
 }
-
-/**
- * Updates the midi output device.
- */
-async function changeInstrumentDevice(){
-    title = "MIDI Output Device";
-    try {
-        await fetch_json("http://localhost:8000/sequencer/device");
-    } catch (err) {
-        console.error("Netzwerkfehler beim Wechseln von " + title + ": " + err, "red");
-        return false;
-    }
-}

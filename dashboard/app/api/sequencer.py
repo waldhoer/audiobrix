@@ -65,13 +65,3 @@ async def change_speed(request: Request, bpm: int):
     Helpers.write("bpm_playing_speed", bpm)
     if sequencer:
         return sequencer.change_speed(bpm)
-
-
-@router.get("/sequencer/device")
-async def change_device(request: Request):
-    """
-    Endpoint for changing the midi device (usually 0 or 1).
-    """
-    sequencer = request.app.state.sequencer
-    if sequencer:
-        return sequencer.change_device()

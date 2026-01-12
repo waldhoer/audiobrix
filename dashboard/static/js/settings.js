@@ -71,8 +71,6 @@ function saveTableSettings() {
 
     writeSettings(newSettings);
 
-    changeInstrumentDevice();
-
     window.location.replace("/dashboard");
 }
 
